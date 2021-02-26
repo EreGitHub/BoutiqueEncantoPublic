@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="bbfc5cdde8694104ab7afebd53f804b3" Name="Diagram1">
+        <EntityTypeShape EntityType="VentaModel.Anulados" Width="1.5" PointX="10.5" PointY="2.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.AperturaCaja" Width="1.5" PointX="5.25" PointY="9.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.Arqueo" Width="1.5" PointX="7.5" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.Caja" Width="1.5" PointX="3" PointY="7.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.Categoria" Width="1.5" PointX="9" PointY="22.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.ConfiguracionEmpresa" Width="1.5" PointX="0.75" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.ConfiguracionFactura" Width="1.5" PointX="2.75" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.Creditos" Width="1.5" PointX="10.5" PointY="11.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.CuentaCliente" Width="1.5" PointX="3" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.DetalleAperturaCaja" Width="1.5" PointX="7.5" PointY="15.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.DetalleArqueo" Width="1.5" PointX="9.75" PointY="5.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.DetalleCreditos" Width="1.5" PointX="12.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.DetalleCuentaCliente" Width="1.5" PointX="5.25" PointY="14" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.DetalleVale" Width="1.5" PointX="8.25" PointY="18.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.DetalleVenta" Width="1.5" PointX="13.5" PointY="5.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.EstadoAperutaCaja" Width="1.5" PointX="3" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.EstadoVenta" Width="1.5" PointX="6" PointY="3.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.Maestro" Width="1.5" PointX="12.75" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.PagoCuentaCliente" Width="1.5" PointX="15" PointY="10.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.PerfilSistema" Width="1.5" PointX="0.75" PointY="10.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.Persona" Width="1.5" PointX="0.75" PointY="14" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.PlanFechaCobro" Width="1.5" PointX="12.75" PointY="13.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.Producto" Width="1.5" PointX="11.25" PointY="22" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.TipoVentaPago" Width="1.5" PointX="6" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.Usuario" Width="1.5" PointX="3" PointY="10.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.Vale" Width="1.5" PointX="6" PointY="19.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.Venta" Width="1.5" PointX="8.25" PointY="9.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="VentaModel.VentaCuentaCliente" Width="1.5" PointX="10.5" PointY="18.875" IsExpanded="true" />
+        <AssociationConnector Association="VentaModel.fk_Venta_Anulados" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_AperturaCaja_Arqueo" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_AperturaCaja_DetalleApertura" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_Caja_AperturaCaja" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_EstadoAperutaCaja_AperturaCaja" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_Usuario_AperturaCaja" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_Arqueo_DetalleArqueo" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_Categoria_Producto" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_Creditos_DetalleCreditos" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_Creditos_PlanFechaCobro" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_Venta_Creditos" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_CuentaCliente_DetalleCuentaCliente" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_Persona_CuentaCliente" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_DetalleCredito_PagoCuentaCliente" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_Vale_DetalleVale" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_Producto_DetalleVenta" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_Venta_DetalleVenta" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_EstadoVenta_Venta" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_PerfilSistema_Usuario" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_Persona_Usuario" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_TipoVentaPago_Venta" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_Usuario_Venta" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_Vale_Venta" ManuallyRouted="false" />
+        <AssociationConnector Association="VentaModel.fk_Venta_VentaCuentaCliente" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

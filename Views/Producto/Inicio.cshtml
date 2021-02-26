@@ -1,0 +1,249 @@
+﻿
+@{
+    ViewBag.Title = "Inicio";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+    <div class="container mt-2">        
+        <h4>Módulo Almacen<span style="font-size:12px;color:#808080"> Encantó boutique Tarija</span></h4>
+        <div class="card mb-3 m-1">
+            <div class="row">
+                <div class="col-sm-12 col-lg-5 col-md-12">
+                    <div class="col-sm">
+                        <h4 class="form-section"><i class="far fa-folder"></i> Almacen</h4>
+                        <button type="button" style="margin-bottom:8px" onclick="Nuevo()" class="btn btn-outline-primary btn-block"><i class="fa fa-plus"></i><span style="margin-left:5px">Nuevo Registro</span> </button>
+                        <label>Categoria</label>
+                        <select id="Categoria" disabled class="form-control">
+                        </select>
+                        <input type="hidden" id="IdProducto" value="0" />
+                        <label>Nombre</label>
+                        <input type="text" disabled class="form-control" placeholder="Nombre" id="Nombre" />
+                        <label>Codigo</label>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <input type="text" disabled style="margin-bottom:5px" class="form-control" placeholder="Codigo" id="Codigo" />
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <button type="button" id="BtnGenerarCodigo" disabled onclick='GenerarCodigo()' style="margin-right:3px" class="btn mb-1 btn-block btn-outline-primary"><i class="fas fa-redo"></i> Generar Código</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <label>Marca</label>
+                                <input type="text" disabled class="form-control" placeholder="Marca" id="Marca" />
+                                <label>Precio Compra</label>
+                                <input type="number" disabled class="form-control" placeholder="Precio Compra" id="PrecioCompra" />
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <label>Stock</label>
+                                <input type="text" disabled class="form-control" placeholder="Stock" id="Stock" />
+                                <label>Precio Venta</label>
+                                <input type="number" disabled class="form-control" placeholder="Precio Venta" id="PrecioVenta" />
+                            </div>
+                        </div>
+
+                        <hr style="margin-bottom:2px" />
+                        <div class="row" style="margin-top:8px">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-secondary btn-block" style="margin-bottom:10px" onclick="Cancelar()"><i class="far fa-times-circle"></i> Cancelar</button>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" disabled id="BtnGuardar" class="btn btn-success btn-block" style="margin-bottom:10px" onclick="Guardar()"><i class="far fa-check-circle"></i> Guardar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-lg-7 col-md-12">
+                    <div class="col-sm">
+                        <h4 class="form-section"><i class="fas fa-folder-open"></i> Lista Almacen</h4>
+                        <select id="IdCategoriaLst" style="margin-bottom:8px" class="form-control">
+                            <option value="0">Select All Categoria</option>
+                        </select>
+                        <div class="row" style="margin-bottom:5px">
+                            <div class="col-lg-10 col-md-10 col-sm-10">
+                                <div class="input-group" style="margin-bottom:5px">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control" id="TxtPersonParametro" placeholder="Buscar por Nombre..." aria-label="Recipient's username" aria-describedby="basic-addon2">
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-sm-2">
+                                <button type="button" onclick='AllProductos(1)' style="margin-right:3px" class="btn mb-1 btn-block btn-outline-primary"><i class="fa fa-search"></i> </button>
+                            </div>
+                        </div>
+                        <div class="containerCustom table-responsive">
+                            <table class='table table-hover table-sm' style='font-size:12px;'>
+                                <thead>
+                                    <tr style="background-color:#17a2b8;border-color:#17a2b8;color:white">
+                                        <th width='1px'>Nº</th>
+                                        <th>Nombre</th>
+                                        <th>Marca</th>
+                                        <th>Codigo</th>
+                                        <th>Stock</th>
+                                        <th>P. Compra</th>
+                                        <th>P. Venta</th>
+                                        <th width='1px'></th>
+                                        <th width='1px'></th>
+                                        <th width='1px'></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ProductosTableHtml"></tbody>
+                            </table>
+                        </div>
+                        <div class="text-center">
+                            <ul class='pagination justify-content-end' id="PageProducto"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@section Scripts {
+    <script type="text/javascript">
+        var EstadoModificar = false;
+        AllProductos(1, 1);
+        AllCategoriaLst();
+        AllCategoria();
+        function AllCategoria() {
+            $('#Categoria').append("<option value='0'>Select Categoria</option>");
+            $.getJSON('@Url.Action("AllCategorias","Categorias")', (O) => {
+                O.forEach((value, i) => {
+                    $('#Categoria').append("<option value='" + value.Id + "'>" + value.Descripcion + "</option>");
+                });
+            });
+        }
+           function GenerarCodigo() {
+            $.getJSON('@Url.Action("GenerarCodigo", "Producto")', null, function (O) {
+                $("#Codigo").val(O);
+            });
+        }
+        function AllCategoriaLst() {
+            $.getJSON('@Url.Action("AllCategorias","Categorias")', (O) => {
+                O.forEach((value, i) => {
+                    $('#IdCategoriaLst').append("<option value='" + value.Id + "'>" + value.Descripcion + "</option>");
+                });
+            });
+        }
+        function AllProductos(pageIndex, is) {
+            $('#ProductosTableHtml').empty();
+            $.getJSON('@Url.Action("AllProductos","Producto")', { SearchValue: $('#TxtPersonParametro').val(), PageIndex: pageIndex, IdCategoria: $('#IdCategoriaLst').val() }, (O) => {
+                var html = "";
+                O.Lst.forEach((value, i) => {
+                    html += "<tr><td>" + (i + 1) + "</td><td>" + value.Nombre + "</td><td>" + value.Marca + "</td><td>" + value.Codigo + "</td><td>" + value.Stock + "</td><td>" + value.PrecioCompra + "</td><td>" + value.PrecioVenta + "</td><td><button class='btn btn-outline-info btn-sm' onclick='ViewProducto(" + value.Id + ",false)'><i class='fa fa-eye'></i></button></td><td><button class='btn btn-outline-secondary btn-sm' onclick='ViewProducto(" + value.Id + ",true)'><i class='fa fa-pencil-alt'></i></button></td><td><button class='btn btn-outline-danger btn-sm' onclick='EliminarProducto(" + value.Id + ")'><i class='fa fa-trash'></i></button></td></tr>";
+                });
+                $('#ProductosTableHtml').append(html);
+                var TotalPages = parseInt(O.TotalPages);
+                var rangeMin = 4;
+                var rangeMax = parseInt(TotalPages) == 1 ? 1 : rangeMin && parseInt(TotalPages) < rangeMin ? parseInt(TotalPages) : rangeMin;
+
+                const paging = { range: rangeMax, pages: TotalPages };
+                var PageArray = doPaging(pageIndex, paging);
+                var sTatusPrev = (pageIndex <= 1) ? true : false;
+                var sTatuslast = (pageIndex >= paging.pages) ? true : false;
+                var html = "<li class='page-item first " + (sTatusPrev ? "disabled" : "") + "'><a href='#' class='page-link' onclick='AllProductos(1, " + TotalPages + ")'>First</a></li><li class='page-item prev  " + (sTatusPrev ? "disabled" : "") + "'><a href='#' class='page-link' onclick='AllProductos(" + parseInt(pageIndex - 1) + ", " + TotalPages + ")'>Prev</a></li>";
+                PageArray.forEach((value, i) => {
+                    html += value.Status
+                        ?
+                        "<li class='page-item active'><a class='page-link' href='#' onclick='AllProductos(" + value.Page + ", " + TotalPages + ")'>" + value.Page + "</a></li>"
+                        :
+                        "<li class='page-item'><a class='page-link' href='#' onclick='AllProductos(" + value.Page + ", " + TotalPages + ")'>" + value.Page + "</a></li>";
+                });
+                html += "<li class='page-item next " + (sTatuslast ? "disabled" : "") + "'><a href='#' class='page-link' onclick='AllProductos(" + parseInt(pageIndex + 1) + ", " + TotalPages + ")'>Next</a></li><li class='page-item last " + (sTatuslast ? "disabled" : "") + "'><a href='#' class='page-link' onclick='AllProductos(" + paging.pages + ", " + TotalPages + ")'>Last</a></li>";
+                $('#PageProducto').html(html);
+            });
+        }
+        function doPaging(current, { range, pages, start = 1 }) {
+            const paging = [];
+            var i = Math.min(pages + start - range, Math.max(start, current - (range / 2 | 0)));
+            const end = i + range;
+            while (i < end) {
+                var infStatus = i === current ? true : false;
+                paging.push({ Page: i++, Status: infStatus });
+            };
+            return paging;
+        }
+        function ViewProducto(IdProducto, _EstadoModificar) {
+            EstadoModificar = _EstadoModificar;
+            disabledHtml();
+            $.getJSON('@Url.Action("GetProductoData", "Producto")', { IdProducto: IdProducto }, (O) => {
+                $("#Categoria").val(O.Categoria);
+                $("#IdProducto").val(O.Id);
+                $("#Nombre").val(O.Nombre);
+                $("#Marca").val(O.Marca);
+                $("#Stock").val(O.Stock);
+                $('#Codigo').val(O.Codigo);
+                $("#PrecioCompra").val(O.PrecioCompra);
+                $("#PrecioVenta").val(O.PrecioVenta);
+            });
+        }
+        function EliminarProducto(Id) {
+            $.getJSON('@Url.Action("Eliminar","Producto")', { Id: Id }, function (O) {
+                if (O) {
+                    toastr.success("El registro fue eliminado");
+                    AllProductos(1, 1);
+                } else {
+                    toastr.error("Error no puedo eliminar el registro");
+                }
+            });
+        }
+        function Nuevo() {
+            EstadoModificar = true;
+            disabledHtml();
+            LimpiarDatos();
+        }
+        function Cancelar() {
+            EstadoModificar = false;
+            disabledHtml();
+            LimpiarDatos();
+        }
+        function disabledHtml() {
+            $("#Categoria").prop("disabled", !EstadoModificar);
+            $("#Nombre").prop("disabled", !EstadoModificar);
+            $("#Marca").prop("disabled", !EstadoModificar);
+            $("#Stock").prop("disabled", !EstadoModificar);
+            $("#PrecioCompra").prop("disabled", !EstadoModificar);
+            $("#PrecioVenta").prop("disabled", !EstadoModificar);
+            $("#BtnGuardar").prop("disabled", !EstadoModificar);
+            $("#BtnGenerarCodigo").prop("disabled", !EstadoModificar);            
+        }
+        function LimpiarDatos() {
+            $("#Categoria").val(0);
+            $("#IdProducto").val(0);
+            $("#Nombre").val("");
+            $("#Marca").val("");
+            $("#Stock").val("");
+            $("#PrecioCompra").val("");
+            $("#PrecioVenta").val("");
+            $('#Codigo').val("");
+        }
+        function Guardar() {
+            var Obj = {
+                Id: $("#IdProducto").val(),
+                Nombre: $("#Nombre").val(),
+                Marca: $("#Marca").val(),
+                Stock: $("#Stock").val(),
+                Codigo: $('#Codigo').val(),
+                PrecioCompra: parseFloat($("#PrecioCompra").val()),
+                PrecioVenta: parseFloat($("#PrecioVenta").val()),
+                Categoria: $("#Categoria").val()
+            };
+            //console.log(Obj)
+            $.ajax({
+                url: '@Url.Action("Guardar","Producto")',
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(Obj),
+                success: function (O) {
+                    if (O.responce) {
+                        Cancelar();
+                        AllProductos(1, 1);
+                    }
+                    MostarInfSave(O.StatusSave);
+                }
+            });
+        };
+    </script>
+}

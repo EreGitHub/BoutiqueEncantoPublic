@@ -1,0 +1,304 @@
+﻿@using Venta.Models
+@{
+    ViewBag.Title = "Inicio";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-2">
+    <h4>Módulo de Reportes<span style="font-size:12px;color:#808080"> Encantó boutique Tarija</span></h4>
+    <div class="card  mb-3 m-1">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3" style="font-size:12px">
+                    <ul class="list-group" id="ofertas">
+                        <li class="list-group-item bg-secondary text-light text-center" style="margin-bottom:3px">LISTA REPORTES</li>
+                        @{
+                            using (var dbContext = new VentaEntities())
+                            {
+                                var UsuarioLogin = dbContext.Usuario.Single(q => q.Login == User.Identity.Name);
+                                if (UsuarioLogin.PerfilSistema == 1)
+                                {
+                                    <button id="Rpt1" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt1','Calculo de Ganacias')">Calculo de Ganacias</button>
+                                    <button id="Rpt2" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt2','Valor de inventario')">Valor de inventario</button>
+                                    <button id="Rpt4" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt4','Ventas Anuladas')">Ventas Anuladas</button>
+                                    <button id="Rpt5" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt5','Vales')">Vales</button>
+                                    <button id="Rpt6" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt6','Creditos por cobrar')">Creditos por cobrar</button>                                    
+                                }
+                                <button id="Rpt3" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt3','Items sin movimiento')">Items sin movimiento</button>
+                                <button id="Rpt7" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt7','Ingreso Diario')">Ingreso Diario</button>
+                            }
+                        }
+                    </ul>
+                </div>
+                <div class="col-sm-9">
+                    <div style="width:100%;padding:1% 0 20% 0">
+                        <h1 class="text-muted text-center" id="NombreReporte">MÓDULO DE REPORTES.</h1>
+                        <hr />
+                        <div id="CalculoGanacia" style="display:none">
+                            @*<h1 class="text-muted text-center">En Desarrollo... :(</h1>*@
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <label>Fecha Inicio:</label>
+                                    <input type="date" class="form-control" id="FechaInicioCalculoGanacia" />
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <label>Fecha Fin:</label>
+                                    <input type="date" class="form-control" id="FechaFinCalculoGanacia" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-2 col-md-2 col-sm-2">
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-sm-8">
+                                    <button onclick="ImprimirReporteCalculoGanacias()" class="btn btn-outline-primary btn-lg btn-block" style="margin-top:10%;"> Procesar reporte</button>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="ValorInventario" style="display:none">
+                            <div class="row">
+                                <div class="col-lg-2 col-md-2 col-sm-2">
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-sm-8">
+                                    <button onclick="ImprimirReporteValorInventario()" class="btn btn-outline-primary btn-lg btn-block" style="margin-top:10%;"> Procesar reporte</button>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="VentasAnuladas" style="display:none">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <label>Fecha Inicio:</label>
+                                    <input type="date" class="form-control" id="FechaInicioVentasAnuladas" />
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <label>Fecha Fin:</label>
+                                    <input type="date" class="form-control" id="FechaFinVentasAnuladas" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-2 col-md-2 col-sm-2">
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-sm-8">
+                                    <button onclick="ImprimirReporteVentasAnuladas()" class="btn btn-outline-primary btn-lg btn-block" style="margin-top:10%;"> Procesar reporte</button>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="Vales" style="display:none">
+                            <label>Tipo:</label>
+                            <select class="form-control" id="TipoConsumo">
+                                <option value="Consumo">Consumido</option>
+                                <option value="SinConsumo">Sin consumo</option>
+                            </select>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <label>Fecha Inicio:</label>
+                                    <input type="date" class="form-control" id="FechaInicioVales" />
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <label>Fecha Fin:</label>
+                                    <input type="date" class="form-control" id="FechaFinVales" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-2 col-md-2 col-sm-2">
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-sm-8">
+                                    <button onclick="ImprimirReporteVales()" class="btn btn-outline-primary btn-lg btn-block" style="margin-top:10%;"> Procesar reporte</button>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="CreditosPorCobrar" style="display:none">
+                            <div class="row">
+                                <div class="col-lg-2 col-md-2 col-sm-2">
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-sm-8">
+                                    <button onclick="ImprimirReporteCreditosPorCobrar()" class="btn btn-outline-primary btn-lg btn-block" style="margin-top:10%;"> Procesar reporte</button>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="ItemsSinMovimiento" style="display:none">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <label>Fecha Inicio:</label>
+                                    <input type="date" class="form-control" id="FechaInicioItemSinMovimiento" />
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <label>Fecha Fin:</label>
+                                    <input type="date" class="form-control" id="FechaFinItemSinMovimiento" />
+                                </div>
+
+                                <div class="col-lg-2 col-md-2 col-sm-2">
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-sm-8">
+                                    <button onclick="ImprimirReporteItemSinMovimiento()" class="btn btn-outline-primary btn-lg btn-block" style="margin-top:10%;"> Procesar reporte</button>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="IngresoDiario" style="display:none">
+                            <label>Fecha</label>
+                            <div class="row" style="margin-bottom:5px">
+                                <div class="col-lg-10 col-md-10 col-sm-10">
+                                    <div class="input-group" style="margin-bottom:5px">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                                        </div>
+                                        <input type="date" class="form-control" id="FechaIngresoDiario" placeholder="Buscar por Nombre..." aria-label="Recipient's username" aria-describedby="basic-addon2">
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2">
+                                    <button type="button" onclick="AllAperturaCajas()" style="margin-right:3px" class="btn mb-1 btn-block btn-outline-primary"><i class="fa fa-search"></i> </button>
+                                </div>
+                            </div>
+                            <div class="row" id="AperturasCajasHtml">
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        var NumeroReporte = "";
+        $(document).ready(function () {
+            var now = new Date();
+            var day = ("0" + now.getDate()).slice(-2);
+            var month = ("0" + (now.getMonth() + 1)).slice(-2);
+            var today = now.getFullYear() + "-" + (month) + "-" + (day);
+            $("#FechaInicioCalculoGanacia").val(today);
+            $("#FechaFinCalculoGanacia").val(today);
+            $('#FechaInicioVentasAnuladas').val(today);
+            $('#FechaFinVentasAnuladas').val(today);
+            $('#FechaInicioVales').val(today);
+            $('#FechaFinVales').val(today);
+            $('#FechaInicioItemSinMovimiento').val(today);
+            $('#FechaFinItemSinMovimiento').val(today);
+        });
+        function SeleccionarReporte(IdNombre, NombreReporte) {
+            $(".list-group-item").removeClass('active');
+            $("#" + IdNombre).addClass('active');
+            $('#NombreReporte').html(NombreReporte);
+            switch (NombreReporte) {
+                case "Calculo de Ganacias":
+                    $('#CalculoGanacia').show();
+                    $('#ValorInventario').hide();
+                    $('#VentasAnuladas').hide();
+                    $('#Vales').hide();
+                    $('#CreditosPorCobrar').hide();
+                    $('#ItemsSinMovimiento').hide();
+                    $('#IngresoDiario').hide();
+                    break;
+                case "Valor de inventario":
+                    $('#CalculoGanacia').hide();
+                    $('#ValorInventario').show();
+                    $('#VentasAnuladas').hide();
+                    $('#Vales').hide();
+                    $('#CreditosPorCobrar').hide();
+                    $('#ItemsSinMovimiento').hide();
+                    $('#IngresoDiario').hide();
+                    break;
+                case "Ventas Anuladas":
+                    $('#CalculoGanacia').hide();
+                    $('#ValorInventario').hide();
+                    $('#VentasAnuladas').show();
+                    $('#Vales').hide();
+                    $('#CreditosPorCobrar').hide();
+                    $('#ItemsSinMovimiento').hide();
+                    $('#IngresoDiario').hide();
+                    break;
+                case "Vales":
+                    $('#CalculoGanacia').hide();
+                    $('#ValorInventario').hide();
+                    $('#VentasAnuladas').hide();
+                    $('#Vales').show();
+                    $('#CreditosPorCobrar').hide();
+                    $('#ItemsSinMovimiento').hide();
+                    $('#IngresoDiario').hide();
+                    break;                
+                case "Creditos por cobrar":
+                    $('#CalculoGanacia').hide();
+                    $('#ValorInventario').hide();
+                    $('#VentasAnuladas').hide();
+                    $('#Vales').hide();
+                    $('#CreditosPorCobrar').show();
+                    $('#ItemsSinMovimiento').hide();
+                    $('#IngresoDiario').hide();
+                    break;
+                case "Items sin movimiento":
+                    $('#CalculoGanacia').hide();
+                    $('#ValorInventario').hide();
+                    $('#VentasAnuladas').hide();
+                    $('#Vales').hide();
+                    $('#CreditosPorCobrar').hide();
+                    $('#ItemsSinMovimiento').show();
+                    $('#IngresoDiario').hide();
+                    break;
+                case "Ingreso Diario":
+                    $('#CalculoGanacia').hide();
+                    $('#ValorInventario').hide();
+                    $('#VentasAnuladas').hide();
+                    $('#Vales').hide();
+                    $('#CreditosPorCobrar').hide();
+                    $('#ItemsSinMovimiento').hide();
+                    $('#IngresoDiario').show();
+                    break;
+                default:
+                    break;
+            }           
+        }
+
+        function AllAperturaCajas() {            
+            $.getJSON('@Url.Action("AllCajasAperturadasPorFecha", "AperturaCaja")', { Fecha: $('#FechaIngresoDiario').val() }, (O) => {
+                var Html = "";
+                O.forEach((value, i) => {
+                    if (value.EstadoAperturaCaja =="Traspaso Final") {
+                        Html += "<div class='col-xl-4 col-sm-6 col-lg-4 col-12'><div class='cardCarCustom card border-primary mb-3'><div class='card-body' style='padding:0px'><h4 class='card-title' style='text-align:center;margin-bottom: 4px;color:#007bff'>" + value.Caja + "</h4></div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.2rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.FechaApertura + "</span><i class='far fa-bookmark'></i> Fecha Apertura</li></ul><label class='text-center' style='margin:8px 0 0px 0'>Nombre del Cajero:</label><div class='alert alert-primary text-center' style='margin:0px 0 10px 0;padding:0 0 0 0'>" + value.Cajero + "</div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.2rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.Idapertura + "</span><i class='far fa-bookmark'></i> Nº Apertura</li></ul><div class='alert alert-primary text-center' style='margin:5px 0 0px 0;padding:0 0 0 0'>" + value.EstadoAperturaCaja + "</div><hr style='margin:4px 0 0 0'><div style='margin-top:5px' class='footer'><button type='button' style='margin: 3px 0 0 0' onclick='ImprimirReporteIngresoDiario(" + value.Idapertura + ")' class='btn btn-block btn-outline-primary btn-sm'><i class='fas fa-print'></i> Imprimir</button></div></div></div>";
+                    }
+                });
+                $('#AperturasCajasHtml').html(Html);
+            });
+        }
+
+        function ImprimirReporteCalculoGanacias() {
+            var url = '@Url.Action("ImprimirReporteCalculoGanacias", "Reportes")' + '?Tipo=PDF&FechaInicio=' + $('#FechaInicioCalculoGanacia').val() + '&FechaFin=' + $('#FechaFinCalculoGanacia').val();
+            window.open(url);
+        }
+        function ImprimirReporteValorInventario() {
+            var url = '@Url.Action("ImprimirReporteValorInventario", "Reportes")' + '?Tipo=PDF';
+            window.open(url);
+        }
+        function ImprimirReporteVentasAnuladas() {
+            var url = '@Url.Action("ImprimirReporteVentasAnuladas", "Reportes")' + '?Tipo=PDF&FechaInicio=' + $('#FechaInicioVentasAnuladas').val() + '&FechaFin=' + $('#FechaFinVentasAnuladas').val();
+            window.open(url);
+        }
+        function ImprimirReporteVales() {
+            var url = '@Url.Action("ImprimirReporteVales", "Reportes")' + '?Tipo=PDF&FechaInicio=' + $('#FechaInicioVales').val() + '&FechaFin=' + $('#FechaFinVales').val() + '&TipoConsumoVale=' + $('#TipoConsumo').val();
+            window.open(url);
+        }
+        function ImprimirReporteCreditosPorCobrar() {
+            var url = '@Url.Action("ImprimirReporteCreditosPorCobrar", "Reportes")' + '?Tipo=PDF';
+            window.open(url);
+        }
+        function ImprimirReporteItemSinMovimiento() {
+            var url = '@Url.Action("ImprimirReporteItemSinMovimiento", "Reportes")' + '?Tipo=PDF&FechaInicio=' + $('#FechaInicioItemSinMovimiento').val() + '&FechaFin=' + $('#FechaFinItemSinMovimiento').val();
+            window.open(url);
+        }
+        function ImprimirReporteIngresoDiario(IdApertura) {
+            var url = '@Url.Action("ImprimirComprobanteCierreCaja", "Reportes")' + '?Tipo=PDF&IdApertura=' + IdApertura;
+            window.open(url);
+        }
+    </script>
+}

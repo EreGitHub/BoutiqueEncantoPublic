@@ -1,0 +1,406 @@
+﻿
+@{
+    ViewBag.Title = "Inicio";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+    <div class="container mt-2">        
+        <h4>Módulo Persona<span style="font-size:12px;color:#808080"> Encantó boutique Tarija</span></h4>
+        <div class="card mb-3 m-1">
+            <div class="row">
+                <div class="col-sm-12 col-lg-6 col-md-12">
+                    <div class="col-sm">
+                        <h4 class="form-section"><i class="fa fa-user"></i> Persona</h4>
+                        <button type="button" onclick="Nuevo()" class="btn btn-outline-primary btn-block"><i class="fa fa-plus"></i><span style="margin-left:5px">Nuevo Registro</span> </button>
+
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <input type="hidden" id="IdPersona" value="0" />
+                                <label>Nombre</label>
+                                <input type="text" disabled class="form-control" placeholder="Nombre" id="Nombre" />
+                                <label>Apellido Paterno</label>
+                                <input type="text" disabled class="form-control" placeholder="Apellido Paterno" id="Apaterno" />
+                                <label>Apellido Materno</label>
+                                <input type="text" disabled class="form-control" placeholder="Apellido Materno" id="Amaterno" />
+                                <label>Ci</label>
+                                <input type="text" disabled class="form-control" placeholder="Ci" id="Ci" />
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <label>Domicilio</label>
+                                <input type="text" disabled class="form-control" placeholder="Domicilio" id="Domicilio" />
+                                <label>Celular</label>
+                                <input type="text" disabled class="form-control" placeholder="Celular" id="Celular" />
+                                <label>Telefono</label>
+                                <input type="text" disabled class="form-control" placeholder="Telefono" id="Telefono" />
+                                <label>Sexo</label>
+                                <select id="Sexo" disabled class="form-control">
+                                    <option value="M">Masculino</option>
+                                    <option value="F">Femenino</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="alertaok" class="alert alert-success text-center" style="margin-top: 8px;">Monto a favor: <span id="MontoAFavor">0 </span> (Bs.)</div>
+                        <hr style="margin-bottom:2px" />
+                        <div class="row" style="margin-top:8px">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-secondary btn-block" style="margin-bottom:10px" onclick="Cancelar()"><i class="far fa-times-circle"></i> Cancelar</button>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" disabled id="BtnGuardar" class="btn btn-success btn-block" style="margin-bottom:10px" onclick="Guardar()"><i class="far fa-check-circle"></i> Guardar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-lg-6 col-md-12">
+                    <div class="col-sm">
+                        <h4 class="form-section"><i class="fa fa-users"></i> Lista Personas</h4>
+                        <div class="row" style="margin-bottom:5px">
+                            <div class="col-lg-10 col-md-10 col-sm-10">
+                                <div class="input-group" style="margin-bottom:5px">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control" id="TxtPersonParametro" placeholder="Buscar por Ci..." aria-label="Recipient's username" aria-describedby="basic-addon2">
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-sm-2">
+                                <button type="button" onclick='AllPerson(1)' style="margin-right:3px" class="btn mb-1 btn-block btn-outline-primary"><i class="fa fa-search"></i> </button>
+                            </div>
+                        </div>
+                        <div class="containerCustom table-responsive">
+                            <table class='table table-hover table-sm' style='font-size:12px;'>
+                                <thead>
+                                    <tr style="background-color:#17a2b8;border-color:#17a2b8;color:white">
+                                        <th width='1px'>Nº</th>
+                                        <th>Nombre</th>
+                                        <th>A. Paterno</th>
+                                        <th>A. Materno</th>
+                                        <th>Ci</th>
+                                        <th>Monto a favor</th>
+                                        <th width='1px'></th>
+                                        <th width='1px'></th>
+                                        <th width='1px'></th>
+                                        <th width='1px'></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="PersonaTableHtml"></tbody>
+                            </table>
+                        </div>
+                        <div class="text-center">
+                            <ul class='pagination justify-content-end' id="PagePerson"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="modal fade" id="Modal_VerCuentaCliente" tabindex="-1" role="dialog" style="overflow-y:scroll">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cuenta Cliente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="PadreMensageApertura" style="display:none;width:100%;padding:6% 0 6% 0">
+                    <h1 class="text-muted text-center" id="MsgApertura"> SIN</h1>
+                </div>
+                <div id="ModalAgregarMontoFavor">
+                    <input type="hidden" id="IdpersonaMontoFavor" value="0" />
+                    <button type="button" style="margin-bottom:5px" class="btn btn-block btn-outline-primary" onclick="AgregarMontoAFavor()"><i class="fas fa-hand-holding-usd"></i> Agregar monto a favor</button>
+                    <div id="alertaok" class="alert alert-success text-center" style="margin-top: 0px;margin:0px 0 0 0">MONTO TOTAL ACUMULADO: <span id="MontoTotalFavor">0 </span> (Bs.)</div>
+                    <h4 class="form-section"><i class="fas fa-clipboard-check"></i> Detalle de la cuenta</h4>
+                    <div class="containerCustom table-responsive">
+                        <table class='table table-hover table-sm' style='font-size:12px;'>
+                            <thead>
+                                <tr style="background-color:#17a2b8;border-color:#17a2b8;color:white">
+                                    <th width='1px'>Nº</th>
+                                    <th>Fecha</th>
+                                    <th>Monto</th>
+                                    <th>Estado</th>
+                                    <th>Forma pago</th>
+                                    <th>Usuario</th>
+                                    <th width='1px'></th>
+                                    <th width='1px'></th>
+                                </tr>
+                            </thead>
+                            <tbody id="DetalleCuentaTableHtml"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><i class="far fa-check-circle"></i> Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Modal_AgregarMontoAFavor" tabindex="-1" role="dialog" style="overflow-y:scroll">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-hand-holding-usd"></i> Agregar Monto Favor</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="number" class="form-control text-center" id="MontoAFavorCliente" value="0" />
+                <label>Pagar con :</label>
+                <select id="TipoPago" class="form-control">
+                    <option value="0">Select Pago</option>
+                </select>
+                <label>Observación</label>
+                <textarea id="Observacion" class="form-control"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" onclick="GuardarMontoFavor()"><i class="fas fa-hand-holding-usd"></i> Agregar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Modal_ObservacionCuentaCliente" tabindex="-1" role="dialog" style="overflow-y:scroll">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Observación</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="IdObservacion" class="alert alert-success text-center" style="margin-top: 8px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><i class="far fa-check-circle"></i> Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        var EstadoModificar = false;
+        AllPerson(1, 1);
+        CargarTipoPago();
+        function CargarTipoPago() {
+            $.getJSON('@Url.Action("TipoVentaPago", "TipoVenta")', function (O) {
+                O.forEach((value, i) => {
+                    $('#TipoPago').append("<option value='" + value.Id + "'>" + value.Nombre + "</option>");
+                });
+            });
+        }
+        function AllPerson(pageIndex, is) {
+            $('#PersonaTableHtml').empty();
+            $.getJSON('@Url.Action("AllPerson","Persona")', { SearchValue: $('#TxtPersonParametro').val(), PageIndex: pageIndex }, (O) => {
+                var html = "";
+                O.Lst.forEach((value, i) => {
+                    html += "<tr><td>" + (i + 1) + "</td><td>" + value.Nombre + "</td><td>" + value.Apaterno + "</td><td>" + value.Amaterno + "</td><td>" + value.Ci + "</td><td>" + value.MontoFavor + "</td><td><button class='btn btn-outline-info btn-sm' toggle='tooltip' data-placement='top' title='Agregar monto a favor' onclick='VerCuentaCliente(" + value.Id + ")'><i class='fa fa-plus'></i></button></td><td><button class='btn btn-outline-info btn-sm' onclick='ViewPersona(" + value.Id + ",false," + value.MontoFavor + ")'><i class='fa fa-eye'></i></button></td><td><button class='btn btn-outline-secondary btn-sm' onclick='ViewPersona(" + value.Id + ",true," + value.MontoFavor +")'><i class='fa fa-pencil-alt'></i></button></td><td><button class='btn btn-outline-danger btn-sm' onclick='EliminarPersona(" + value.Id + ")'><i class='fa fa-trash'></i></button></td></tr>";
+                });
+                $('#PersonaTableHtml').append(html);
+                var TotalPages = parseInt(O.TotalPages);
+                var rangeMin = 4;
+                var rangeMax = parseInt(TotalPages) == 1 ? 1 : rangeMin && parseInt(TotalPages) < rangeMin ? parseInt(TotalPages) : rangeMin;
+
+                const paging = { range: rangeMax, pages: TotalPages };
+                var PageArray = doPaging(pageIndex, paging);
+                var sTatusPrev = (pageIndex <= 1) ? true : false;
+                var sTatuslast = (pageIndex >= paging.pages) ? true : false;
+                var html = "<li class='page-item first " + (sTatusPrev ? "disabled" : "") + "'><a href='#' class='page-link' onclick='AllPerson(1, " + TotalPages + ")'>First</a></li><li class='page-item prev  " + (sTatusPrev ? "disabled" : "") + "'><a href='#' class='page-link' onclick='AllPerson(" + parseInt(pageIndex - 1) + ", " + TotalPages + ")'>Prev</a></li>";
+                PageArray.forEach((value, i) => {
+                    html += value.Status
+                        ?
+                        "<li class='page-item active'><a class='page-link' href='#' onclick='AllPerson(" + value.Page + ", " + TotalPages + ")'>" + value.Page + "</a></li>"
+                        :
+                        "<li class='page-item'><a class='page-link' href='#' onclick='AllPerson(" + value.Page + ", " + TotalPages + ")'>" + value.Page + "</a></li>";
+                });
+                html += "<li class='page-item next " + (sTatuslast ? "disabled" : "") + "'><a href='#' class='page-link' onclick='AllPerson(" + parseInt(pageIndex + 1) + ", " + TotalPages + ")'>Next</a></li><li class='page-item last " + (sTatuslast ? "disabled" : "") + "'><a href='#' class='page-link' onclick='AllPerson(" + paging.pages + ", " + TotalPages + ")'>Last</a></li>";
+                $('#PagePerson').html(html);
+            });
+        }
+        function doPaging(current, { range, pages, start = 1 }) {
+            const paging = [];
+            var i = Math.min(pages + start - range, Math.max(start, current - (range / 2 | 0)));
+            const end = i + range;
+            while (i < end) {
+                var infStatus = i === current ? true : false;
+                paging.push({ Page: i++, Status: infStatus });
+            };
+            return paging;
+        }
+        function VerCuentaCliente(IdPersona) {
+            $.getJSON('@Url.Action("VerificarAperturaCaja", "AperturaCaja")', (O) => {
+                $('#Modal_VerCuentaCliente').modal('show');
+                if (O.EstadoReturn) {
+                    $('#ModalAgregarMontoFavor').show();
+                    $('#PadreMensageApertura').hide();
+                    _VerCuentaCliente(IdPersona);
+                } else {
+                    toastr.error(O.EstadoMsg);
+                    $('#MsgApertura').html(O.EstadoMsg);
+                    $('#ModalAgregarMontoFavor').hide();
+                    $('#PadreMensageApertura').show();
+                }
+            });
+        }
+        function _VerCuentaCliente(IdPersona) {
+            $('#IdpersonaMontoFavor').val(IdPersona);
+            $('#DetalleCuentaTableHtml').empty();
+            $.getJSON('@Url.Action("All", "CuentaCliente")', { IdPersona: IdPersona }, (O) => {
+                $("#MontoTotalFavor").html(O.MontoTotalAcumulado);
+                var html = "";
+                O.Lst.forEach((value, i) => {
+                    html += "<tr><td>" + (i + 1) + "</td><td>" + value.Fecha + "</td><td>" + value.Monto + "</td><td>" + value.Tipo + "</td><td>" + value.FormaPago + "</td><td>" + value.Usuario + "</td><td><button type='button' toggle='tooltip' data-placement='top' title='Observación' class='btn btn-outline-info btn-sm' onclick='Observacion(" + value.Id + ")'><i class='fa fa-eye'></i></button></td><td>" + ((value.Tipo == "Depositado") ? "<button type='button' toggle='tooltip' data-placement='top' title='Observación' class='btn btn-outline-danger btn-sm' onclick='EliminarMonto(" + value.Id + ")'><i class='fa fa-trash'></i></button>" : "") + "</td></tr>";
+                });
+                $('#DetalleCuentaTableHtml').append(html);
+            });
+        }
+        function EliminarMonto(Id) {
+            $.getJSON('@Url.Action("EliminarMonto", "CuentaCliente")', { Id }, (O) => {
+                if (O) {
+                    VerCuentaCliente($('#IdpersonaMontoFavor').val());
+                    $('#Modal_AgregarMontoAFavor').modal('hide');
+                    $('#IdpersonaMontoFavor').val(0);
+                    AllPerson(1, 1);
+                }else {
+                    toastr.error('El monto a eliminar debe ser menos al MONTO TOTAL ACUMULADO')
+                }
+            });
+        }
+        function AgregarMontoAFavor() {
+            $('#Modal_AgregarMontoAFavor').modal('show');
+            $('#MontoAFavorCliente').val(0);
+            $('#Observacion').val("");
+        }
+        function GuardarMontoFavor() {
+            $.getJSON('@Url.Action("GuardarMontoFavor", "CuentaCliente")', { IdPersona: $('#IdpersonaMontoFavor').val(), Monto: $('#MontoAFavorCliente').val(), Observacion: $('#Observacion').val(), TipoVentaPago: $('#TipoPago').val() }, (O) => {
+                if (O.responce) {
+                    VerCuentaCliente($('#IdpersonaMontoFavor').val());
+                    $('#Modal_AgregarMontoAFavor').modal('hide');
+                    $('#IdpersonaMontoFavor').val(0);
+                    $('#TipoPago').val(0)
+                    AllPerson(1, 1);
+                    var IdDetalleCuentaCliente = O.IdDetalleCuentaCliente;
+                    var url = '@Url.Action("ImprimirComprobanteDeposito", "Reportes")' + '?Tipo=PDF&IdDetalleCuentaCliente=' + IdDetalleCuentaCliente;
+                    window.open(url);
+
+                    @*var url = '@Url.Action("ImprimirReporteDescuento", "Reporte")' + '?Tipo=' + Tipo + '&IdModulo=' + activo + '&IdTurno=' + turno;
+                    window.open(url);*@
+
+                                        @* window.setTimeout(function () {
+                        window.open('@Url.Action("ReporteReciboUlt", "Reportes", new {id= "PDF"},null)');
+                        detalle = [];
+                        ObtenerNumeroRecibo();
+                        ListarDetalle();
+                        ObtenerMovimientos("1");
+                        ObtenerSaldoaFavor();
+                        $("#cobrar").prop("disabled", false);
+                    }, 2000);*@
+                }
+                MostarInfSave(O.StatusSave);
+            });
+        }
+        function Observacion(IdDetalleCuentaCliente) {
+            $('#Modal_ObservacionCuentaCliente').modal('show');
+            $.getJSON('@Url.Action("ObservacionTrasferenciaMonto", "CuentaCliente")', { IdDetalleCuentaCliente: IdDetalleCuentaCliente }, (O) => {
+                $('#IdObservacion').html(O)
+            });
+        }
+        function ViewPersona(IdPersona, _EstadoModificar, MontoFavor) {
+            $('#MontoAFavor').html(MontoFavor);
+            EstadoModificar = _EstadoModificar;
+            disabledHtml();
+            if (_EstadoModificar) {
+                $("#Contraseña").prop("disabled", true);
+                $('#ActivatePassword').show();
+            } else {
+                $('#ActivatePassword').hide();
+            }
+            $.getJSON('@Url.Action("GetPersonaData", "Persona")', { IdPersona: IdPersona }, (O) => {
+                $("#IdPersona").val(O.Id);
+                $("#Nombre").val(O.Nombre);
+                $("#Apaterno").val(O.Apaterno);
+                $("#Amaterno").val(O.Amaterno);
+                $("#Ci").val(O.Ci);
+                $("#Domicilio").val(O.Domicilio);
+                $("#Celular").val(O.Celular);
+                $("#Telefono").val(O.Telefono);
+                $("#Sexo").val(O.Sexo);
+            });
+        }
+        function EliminarPersona(Id) {
+            $.getJSON('@Url.Action("Eliminar","Persona")', { Id: Id }, function (O) {
+                if (O) {
+                    toastr.success("El registro fue eliminado");
+                    AllPerson(1, 1);
+                } else {
+                    toastr.error("Error no puedo eliminar el registro");
+                }
+            });
+        }
+        function Nuevo() {
+            EstadoModificar = true;
+            disabledHtml();
+            LimpiarDatos();
+        }
+        function Cancelar() {
+            EstadoModificar = false;
+            disabledHtml();
+            LimpiarDatos();
+        }
+        function disabledHtml() {
+            $("#Nombre").prop("disabled", !EstadoModificar);
+            $("#Apaterno").prop("disabled", !EstadoModificar);
+            $("#Amaterno").prop("disabled", !EstadoModificar);
+            $("#Ci").prop("disabled", !EstadoModificar);
+            $("#Domicilio").prop("disabled", !EstadoModificar);
+            $("#Celular").prop("disabled", !EstadoModificar);
+            $("#Telefono").prop("disabled", !EstadoModificar);
+            $("#Sexo").prop("disabled", !EstadoModificar);
+            $("#BtnGuardar").prop("disabled", !EstadoModificar);
+        }
+        function LimpiarDatos() {
+            $("#IdPersona").val(0);
+            $("#Nombre").val("");
+            $("#Apaterno").val("");
+            $("#Amaterno").val("");
+            $("#Ci").val("");
+            $("#Domicilio").val("");
+            $("#Celular").val("");
+            $("#Telefono").val("");
+            $("#Sexo").val("M");
+        }
+        function Guardar() {
+            var Obj = {
+                Id: $("#IdPersona").val(),
+                Nombre: $("#Nombre").val(),
+                Apaterno: $("#Apaterno").val(),
+                Amaterno: $("#Amaterno").val(),
+                Ci: $("#Ci").val(),
+                Domicilio: $("#Domicilio").val(),
+                Celular: $("#Celular").val(),
+                Telefono: $("#Telefono").val(),
+                Sexo: $("#Sexo").val()
+            };
+            $.ajax({
+                url: '@Url.Action("Guardar","Persona")',
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(Obj),
+                success: function (O) {
+                    if (O.responce) {
+                        Cancelar();
+                        AllPerson(1, 1);
+                    }
+                    MostarInfSave(O.StatusSave);
+                }
+            });
+        };
+    </script>
+}

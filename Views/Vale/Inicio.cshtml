@@ -1,0 +1,508 @@
+﻿
+@{
+    ViewBag.Title = "Vale";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-2">
+    <h4>Módulo Vale<span style="font-size:12px;color:#808080"> Encantó boutique Tarija</span></h4>
+    <div class="card mb-3 m-1">
+        <div class="row">
+            <div class="col-sm-12 col-lg-4 col-md-12">
+                <div class="col-sm">
+                    <h4 class="form-section"><i class="far fa-clipboard"></i> Vale</h4>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <button type="button" id="BtnCrearVale" style="margin-bottom:5px" onclick="Nuevo()" class="btn btn-outline-primary btn-block"><i class="fa fa-plus"></i><span style="margin-left:5px">Crear Vale</span> </button>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <button type="button" data-toggle='modal' onclick="NuevoCliente()" data-target='#ModalRegistrarCliente' class="btn btn-outline-primary btn-block"><i class="fa fa-plus"></i><span style="margin-left:5px">Registrar Cliente</span> </button>
+                        </div>
+                    </div>
+                    <input type="hidden" id="IdVale" value="0" />
+                    <label>Cliente Compra</label>
+                    <input type="hidden" id="IdPersonaCompra" value="0" />
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                        </div>
+                        <input type="text" class="form-control" disabled id="NombreClienteCompra" onkeyup="BuscarPersonaCompra()" placeholder="Buscar....">
+                    </div>
+                    <div id="ListarPersonaCompra" style="position: absolute; z-index: 10; width: 95%" class="list-group"></div>
+
+                    <label>Cliente consume</label>
+                    <input type="hidden" id="IdPersonaConsume" value="0" />
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                        </div>
+                        <input type="text" class="form-control" disabled id="NombreClienteConsume" onkeyup="BuscarPersonaConsume()" placeholder="Buscar....">
+                    </div>
+                    <div id="ListarPersonaConsume" style="position: absolute; z-index: 10; width: 95%" class="list-group"></div>
+                    <label>Pagar con:</label>
+                    <select id="TipoPago" disabled class="form-control">
+                        <option value="0">Select Pago</option>
+                    </select>
+                    <label>Codigo</label>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-8 col-sm-8">
+                            <input type="text" disabled class="form-control text-center" style="margin-bottom:5px" placeholder="Codigo" id="Codigo" />
+                        </div>
+                        <div class="col-lg-6 col-md-4 col-sm-4">
+                            <button type="button" id="BtnGenerarCodigo" disabled onclick='GenerarCodigo()' style="margin-right:3px" class="btn mb-1 btn-block btn-outline-primary"><i class="fas fa-redo"></i> Generar Código</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <label>Monto (Bs)</label>
+                            <input type="number" disabled class="form-control text-center" placeholder="Monto" value="0" id="Monto" />
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <label>Estado</label>
+                            <input type="text" disabled class="form-control text-center" placeholder="Sin Consumo" id="EstadoConsumo" />
+                        </div>
+                    </div>
+                    <div id="alertaok" class="alert alert-success" style="display:none;margin-top:8px"></div>
+
+                    <hr style="margin-bottom:2px" />
+                    <div class="row" style="margin-top:8px">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary btn-block" style="margin-bottom:10px" onclick="Cancelar()"><i class="far fa-times-circle"></i> Cancelar</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" disabled id="BtnGuardar" class="btn btn-success btn-block" style="margin-bottom:10px" onclick="Guardar()"><i class="far fa-check-circle"></i> Guardar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-lg-8 col-md-12">
+                <div class="col-sm">
+                    <h4 class="form-section"><i class="fas fa-clipboard-check"></i> Lista vales creados</h4>
+                    <div class="row" style="margin-bottom:5px">
+                        <div class="col-lg-10 col-md-10 col-sm-10">
+                            <div class="input-group" style="margin-bottom:5px">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                                </div>
+                                <input type="text" class="form-control" id="TxtValeParametro" placeholder="Buscar por Ci..." aria-label="Recipient's username" aria-describedby="basic-addon2">
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-2">
+                            <button type="button" onclick='AllVales(1)' style="margin-right:3px" class="btn mb-1 btn-block btn-outline-primary"><i class="fa fa-search"></i> </button>
+                        </div>
+                    </div>
+                    <div class="row" id="ListaInscriptosHtml">
+                    </div>
+                    <div class="containerCustom table-responsive">
+                        <table class='table table-hover table-sm' style='font-size:12px;'>
+                            <thead>
+                                <tr style="background-color:#17a2b8;border-color:#17a2b8;color:white">
+                                    <th width='1px'>Nº</th>
+                                    <th><a style="color:white" href='#' onclick="Ordernar('PagaVale')">Pagó Vale</a></th>
+                                    <th><a style="color:white" href='#' onclick="Ordernar('Cosume')">Cosume</a></th>
+                                    <th><a style="color:white" href='#' onclick="Ordernar('Codigo')">Código</a></th>
+                                    <th><a style="color:white" href='#' onclick="Ordernar('Monto')">Monto</a></th>
+                                    <th><a style="color:white" href='#' onclick="Ordernar('Fecha')">Fecha</a></th>
+                                    <th><a style="color:white" href='#' onclick="Ordernar('Estado')">Estado</a></th>
+                                    <th width='1px'></th>
+                                    <th width='1px'></th>
+                                    <th width='1px'></th>
+                                </tr>
+                            </thead>
+                            <tbody id="ValeTableHtml"></tbody>
+                        </table>
+                    </div>
+                    <div class="text-center">
+                        <ul class='pagination justify-content-end' id="PageVela"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalRegistrarCliente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Registro Cliente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label>Nombre</label>
+                <input type="text" class="form-control" placeholder="Nombre" id="NombreCliente" />
+                <label>Apellido Paterno</label>
+                <input type="text" class="form-control" placeholder="Apellido Paterno" id="ApaternoCliente" />
+                <label>Apellido Materno</label>
+                <input type="text" class="form-control" placeholder="Apellido Materno" id="AmaternoCliente" />
+                <label>Ci</label>
+                <input type="text" class="form-control" placeholder="Ci" id="CiCliente" />
+                <label>Domicilio</label>
+                <input type="text" class="form-control" placeholder="Domicilio" id="DomicilioCliente" />
+                <label>Celular</label>
+                <input type="text" class="form-control" placeholder="Celular" id="CelularCliente" />
+                <label>Telefono</label>
+                <input type="text" class="form-control" placeholder="Telefono" id="TelefonoCliente" />
+                <label>Sexo</label>
+                <select id="SexoCliente" class="form-control">
+                    <option value="M">Masculino</option>
+                    <option value="F">Femenino</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-ban" aria-hidden="true"></i> Cancelar</button>
+                <button type="button" class="btn btn-outline-primary" onclick="GuardarCliente()"><i class="fa fa-times" aria-hidden="true"></i> Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Modal_DetalleVale" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Detalle</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class='row'>
+                    <div class='col-xl-6 col-sm-6 col-lg-6 col-6'>
+                        <label>Cliente paga vale</label>
+                        <input type="text" disabled class="form-control" placeholder="Cliente paga" id="ClientePagaValeView" />
+                        <label>Tipo pago</label>
+                        <input type="text" disabled class="form-control" placeholder="Tipo pago" id="TipoPagoView" />
+                        <label>Costo del vale</label>
+                        <input type="text" disabled class="form-control" placeholder="Monto" id="MontoValeView" />
+                    </div>
+                    <div class='col-xl-6 col-sm-6 col-lg-6 col-6'>
+                        <label>Cliente Consume Vale</label>
+                        <input type="text" disabled class="form-control" placeholder="Cliente Consume Vale" id="ClienteConsumeValeView" />
+                        <label>Codigo</label>
+                        <input type="text" disabled class="form-control" placeholder="Codigo" id="CodigoValeView" />
+                        <label>Fecha</label>
+                        <input type="text" disabled class="form-control" placeholder="Fecha" id="FechaView" />
+                    </div>
+                </div>
+                <label>Estado</label>
+                <input type="text" disabled style="margin-bottom:5px" class="form-control text-center" placeholder="Estado" id="EstadoValeView" />
+                <button type="button" id="BtnImprimirVale" class="btn btn-block btn-outline-secondary" onclick="ImprimirDuplicadoVale()"><i class="fas fa-clone"></i> Imprmir Duplicado</button>
+                <h4 class="form-section" style="margin-bottom:10px"><i class="fas fa-clipboard-check"></i> Detalle vale consumo</h4>
+                <div class="row" id="DetalleValeHtml">
+                    <!--
+                        <div class='col-xl-6 col-sm-6 col-lg-6 col-12'>
+                        <div class='cardCarCustom card border-primary mb-3'>
+                            <div class='card-body' style='padding:0px'>
+                                <h4 class='card-title' style='text-align:center;margin-bottom: 4px;color:#007bff'>
+                                    Transferido
+                                </h4>
+                            </div>
+                            <ul class='list-group list-group-flush'>
+                                <li class='list-group-item' style='padding:0.2rem;font-size:12px'>
+                                    <span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>Sep 13 2020 5:58PM</span>
+                                    <i class='far fa-calendar-check'></i> Fecha
+                                </li>
+                            </ul>
+                            <label class='text-center' style='margin:5px 0 0 0'>Detalle:</label>
+                            <div class='alert alert-primary text-center' style='margin:0px 0 8px 0;padding:2px 2px 2px 2px'>el monto fue transferido acuenta del cliente</div>
+                            <ul class='list-group list-group-flush'>
+                                <li class='list-group-item' style='padding:0.2rem;font-size:12px'>
+                                    <span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>300 (Bs.)</span>
+                                    <i class='fas fa-money-bill-alt'></i> Monto
+                                </li>
+                            </ul>
+
+                            <label class='text-center' style='margin:0px 0 0 0'>Usuario</label>
+                            <div class='alert alert-primary text-center' style='margin:0px 0 0px 0;padding:0 0 0 0'>Maria rios ortega</div>
+                            <hr style='margin:6px 0 0 0'>
+                        </div>
+                    </div>-->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-ban" aria-hidden="true"></i> Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        var EstadoAperturaCaja = false;
+        var EstadoModificar = false;
+        var sortColumnName = "Fecha";
+        var sortDirection = "desc";
+        VerificarAperturaCaja();
+        AllVales(1, 1);
+        function VerificarAperturaCaja() {
+            $.getJSON('@Url.Action("VerificarAperturaCaja", "AperturaCaja")', (O) => {
+                if (O.EstadoReturn) {
+                    EstadoAperturaCaja = true;
+                    CargarTipoPago();
+                    $('#BtnCrearVale').prop("disabled", false);
+                } else {
+                    toastr.error(O.EstadoMsg)
+                    $('#BtnCrearVale').prop("disabled", true);
+                }
+            });
+        }
+        function Ordernar(Orden) {
+            if (Orden == sortColumnName) {
+                sortDirection = (sortDirection == "asc") ? "desc" : "asc";
+            } else {
+                sortDirection = "asc";
+            }
+            sortColumnName = Orden;
+            AllVales(1, 1);
+        }
+        function CargarTipoPago() {
+            $.getJSON('@Url.Action("TipoVentaPago", "TipoVenta")', function (O) {
+                O.forEach((value, i) => {
+                    $('#TipoPago').append("<option value='" + value.Id + "'>" + value.Nombre + "</option>");
+                });
+            });
+        }
+        function AllVales(pageIndex, is) {
+            $('#ValeTableHtml').empty();
+            $.getJSON('@Url.Action("AllVale", "Vale")', { sortColumnName, sortDirection, SearchValue: $('#TxtValeParametro').val(), PageIndex: pageIndex }, (O) => {
+                var html = "";
+                O.Lst.forEach((value, i) => {
+                    html += "<tr><td>" + (i + 1) + "</td><td>" + value.NombreClientePagaVale + "</td><td>" + value.NombreClienteConsume + "</td><td>" + value.Codigo + "</td><td>" + value.Monto + "</td><td>" + value.Fecha + "</td><td>" + value.EstadoConsumo + "</td><td>" + ((value.EstadoConsumo == "No Consumido") ? ((EstadoAperturaCaja) ? "<button class='btn btn-outline-danger btn-sm' onclick='EliminarVale(" + value.Id + ")'><i class='fa fa-trash'></i></button>" : "") : "") + "</td><td>" + ((value.EstadoConsumo == "No Consumido") ? ((EstadoAperturaCaja) ? "<button class='btn btn-outline-secondary btn-sm' onclick='ViewVale(" + value.Id + ",true)'><i class='fa fa-pencil-alt'></i></button>" : "") : "") + "</td><td><button class='btn btn-outline-info btn-sm' onclick='DetalleVale(" + value.Id + ",false)'><i class='fa fa-eye'></i></button></td></tr>";
+                });
+                $('#ValeTableHtml').append(html);
+                var TotalPages = parseInt(O.TotalPages);
+                var rangeMin = 4;
+                var rangeMax = parseInt(TotalPages) == 1 ? 1 : rangeMin && parseInt(TotalPages) < rangeMin ? parseInt(TotalPages) : rangeMin;
+
+                const paging = { range: rangeMax, pages: TotalPages };
+                var PageArray = doPaging(pageIndex, paging);
+                var sTatusPrev = (pageIndex <= 1) ? true : false;
+                var sTatuslast = (pageIndex >= paging.pages) ? true : false;
+                var html = "<li class='page-item first " + (sTatusPrev ? "disabled" : "") + "'><a href='#' class='page-link' onclick='AllVales(1, " + TotalPages + ")'>First</a></li><li class='page-item prev  " + (sTatusPrev ? "disabled" : "") + "'><a href='#' class='page-link' onclick='AllVales(" + parseInt(pageIndex - 1) + ", " + TotalPages + ")'>Prev</a></li>";
+                PageArray.forEach((value, i) => {
+                    html += value.Status
+                        ?
+                        "<li class='page-item active'><a class='page-link' href='#' onclick='AllVales(" + value.Page + ", " + TotalPages + ")'>" + value.Page + "</a></li>"
+                        :
+                        "<li class='page-item'><a class='page-link' href='#' onclick='AllVales(" + value.Page + ", " + TotalPages + ")'>" + value.Page + "</a></li>";
+                });
+                html += "<li class='page-item next " + (sTatuslast ? "disabled" : "") + "'><a href='#' class='page-link' onclick='AllVales(" + parseInt(pageIndex + 1) + ", " + TotalPages + ")'>Next</a></li><li class='page-item last " + (sTatuslast ? "disabled" : "") + "'><a href='#' class='page-link' onclick='AllVales(" + paging.pages + ", " + TotalPages + ")'>Last</a></li>";
+                $('#PageVela').html(html);
+            });
+        }
+        function doPaging(current, { range, pages, start = 1 }) {
+            const paging = [];
+            var i = Math.min(pages + start - range, Math.max(start, current - (range / 2 | 0)));
+            const end = i + range;
+            while (i < end) {
+                var infStatus = i === current ? true : false;
+                paging.push({ Page: i++, Status: infStatus });
+            };
+            return paging;
+        }
+
+        function NuevoCliente() {
+            $("#NombreCliente").val("");
+            $("#ApaternoCliente").val("");
+            $("#AmaternoCliente").val("");
+            $("#CiCliente").val("");
+            $("#DomicilioCliente").val("");
+            $("#CelularCliente").val("");
+            $("#TelefonoCliente").val("");
+            $("#SexoCliente").val("M");
+        }
+        function GuardarCliente() {
+            var Obj = {
+                Id: 0,
+                Nombre: $("#NombreCliente").val(),
+                Apaterno: $("#ApaternoCliente").val(),
+                Amaterno: $("#AmaternoCliente").val(),
+                Ci: $("#CiCliente").val(),
+                Domicilio: $("#DomicilioCliente").val(),
+                Celular: $("#CelularCliente").val(),
+                Telefono: $("#TelefonoCliente").val(),
+                Sexo: $("#SexoCliente").val()
+            };
+            $.ajax({
+                url: '@Url.Action("Guardar","Persona")',
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(Obj),
+                success: function (O) {
+                    if (O.responce) {
+                        $('#ModalRegistrarCliente').modal('hide');
+                        Cancelar();
+                    }
+                    MostarInfSave(O.StatusSave);
+                }
+            });
+        };
+        function BuscarPersonaCompra() {
+            var Obj = { TxtParametro: $('#NombreClienteCompra').val()};
+            $('#ListarPersonaCompra').empty();
+            $.getJSON('@Url.Action("BuscarPersona", "Persona")', Obj, (O) => {
+                if (O != null) {
+                    O.forEach(value => {
+                        $('#ListarPersonaCompra').append("<a style='text-decoration:none' onclick='SeleccionarPersonaCompra(" + value.Id + ",\"" + value.Nombre + "\",\"" + value.Apaterno + "\",\"" + value.Amaterno + "\")' class='list-group-item' ><div style='display: inline-block'><i class='fa fa-user-o' style='margin-right: 5px'></i>" + value.Nombre + " " + value.Apaterno + " " + value.Amaterno + " " + value.Ci + "</div></a>");
+                    });
+                }
+            });
+        }
+        function SeleccionarPersonaCompra(IdPersona, Nombre, Apaterno, Amaterno) {
+            $('#IdPersonaCompra').val(IdPersona);
+            $('#NombreClienteCompra').val(Nombre + ' ' + Apaterno + ' ' + Amaterno);
+            $('#ListarPersonaCompra').empty();
+        }
+
+        function BuscarPersonaConsume() {
+            var Obj = { TxtParametro: $('#NombreClienteConsume').val()};
+            $('#ListarPersonaConsume').empty();
+            $.getJSON('@Url.Action("BuscarPersona", "Persona")', Obj, (O) => {
+                if (O != null) {
+                    O.forEach(value => {
+                        $('#ListarPersonaConsume').append("<a style='text-decoration:none' onclick='SeleccionarPersonaConsume(" + value.Id + ",\"" + value.Nombre + "\",\"" + value.Apaterno + "\",\"" + value.Amaterno + "\")' class='list-group-item' ><div style='display: inline-block'><i class='fa fa-user-o' style='margin-right: 5px'></i>" + value.Nombre + " " + value.Apaterno + " " + value.Amaterno + " " + value.Ci + "</div></a>");
+                    });
+                }
+            });
+        }
+        function SeleccionarPersonaConsume(IdPersona, Nombre, Apaterno, Amaterno) {
+            $('#IdPersonaConsume').val(IdPersona);
+            $('#NombreClienteConsume').val(Nombre + ' ' + Apaterno + ' ' + Amaterno);
+            $('#ListarPersonaConsume').empty();
+        }
+        function ViewVale(IdVale, _EstadoModificar) {
+            EstadoModificar = _EstadoModificar;
+            disabledHtml();
+            $.getJSON('@Url.Action("GetValeData", "Vale")', { IdVale: IdVale }, (O) => {
+                $("#IdVale").val(O.Id);
+                $("#IdPersonaCompra").val(O.IdPersonaPagaVale);
+                $("#NombreClienteCompra").val(O.NombreClientePagaVale);
+                $("#IdPersonaConsume").val(O.IdPersonaConsumeVale);
+                $("#NombreClienteConsume").val(O.NombreClienteConsume);
+                $("#Codigo").val(O.Codigo);
+                $("#Monto").val(O.Monto);
+                $('#EstadoConsumo').val(O.EstadoConsumo)
+                $("#TipoPago").val(O.IdTipoPago);
+                if (O.Detalle!= null) {
+                    $("#alertaok").show();
+                    $("#alertaok").html(O.Detalle);
+                } else {
+                    $("#alertaok").hide();
+                }
+            });
+        }
+        function EliminarVale(Id) {
+            $.getJSON('@Url.Action("Eliminar","Vale")', { Id: Id }, function (O) {
+                if (O) {
+                    toastr.success("El registro fue eliminado");
+                    AllVales(1, 1);
+                } else {
+                    toastr.error("Error no puedo eliminar el registro, puede que el vale ya fue consumido");
+                }
+            });
+        }
+        function GenerarCodigo() {
+            $.getJSON('@Url.Action("GenerarCodigo", "Vale")', null, function (O) {
+                $("#Codigo").val(O);
+            });
+        }
+        function DetalleVale(IdVale) {
+            Cancelar();
+            $('#Modal_DetalleVale').modal('show');
+            $.getJSON('@Url.Action("GetDetlle", "Vale")', { IdVale: IdVale }, (O) => {
+                $('#IdVale').val(IdVale);
+                $('#ClientePagaValeView').val(O.DatosVale.NombreClientePagaVale);
+                $('#TipoPagoView').val(O.DatosVale.TipoPago);
+                $('#MontoValeView').val(O.DatosVale.Monto);
+                $('#ClienteConsumeValeView').val(O.DatosVale.NombreClienteConsume);
+                $('#CodigoValeView').val(O.DatosVale.Codigo);
+                $('#FechaView').val(O.DatosVale.Fecha);
+                $('#EstadoValeView').val(O.DatosVale.EstadoConsumo);
+                if (O.LstDetalle.length == 0) {
+                    $('#BtnImprimirVale').show();
+                } else {
+                    $('#BtnImprimirVale').hide();
+                }
+                var html = "";
+                O.LstDetalle.forEach((value, i) => {
+                    html += "<div class='col-xl-6 col-sm-6 col-lg-6 col-12'><div class='cardCarCustom card border-primary mb-3'><div class='card-body' style='padding:0px'><h4 class='card-title' style='text-align:center;margin-bottom: 4px;color:#007bff'>" + value.EstadoConsumo + "</h4></div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.2rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.Fecha + "</span><i class='far fa-calendar-check'></i> Fecha</li></ul><label class='text-center' style='margin:5px 0 0 0'>Detalle:</label><div class='alert alert-primary text-center' style='margin:0px 0 8px 0;padding:2px 2px 2px 2px'>" + value.Detalle + "</div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.2rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.Monto + " (Bs.)</span><i class='fas fa-money-bill-alt'></i> Monto</li></ul><label class='text-center' style='margin:0px 0 0 0'>Usuario</label><div class='alert alert-primary text-center' style='margin:0px 0 0px 0;padding:0 0 0 0'>" + value.Usuario + "</div><hr style='margin:6px 0 0 0'></div></div>";
+                });
+                $('#DetalleValeHtml').html(html);
+            });
+        }
+        function ImprimirDuplicadoVale() {
+            ImprimirComprobantePagoVale($('#IdVale').val());
+        }
+         function ImprimirComprobantePagoVale(IdVale) {
+            //window.setTimeout(function () {
+             var url = '@Url.Action("ImprimirComprobanteVentaVale", "Reportes")' + '?Tipo=PDF&IdVale=' + IdVale;
+             window.open(url);
+            //}, 1000);
+        }
+        function Nuevo() {            
+            EstadoModificar = true;
+            disabledHtml();
+            LimpiarDatos();
+        }
+        function Cancelar() {
+            EstadoModificar = false;
+            disabledHtml();
+            LimpiarDatos();
+        }
+        function disabledHtml() {
+            $("#NombreClienteCompra").prop("disabled", !EstadoModificar);
+            $("#NombreClienteConsume").prop("disabled", !EstadoModificar);
+            //$("#Codigo").prop("disabled", !EstadoModificar);
+            $("#Monto").prop("disabled", !EstadoModificar);
+            $("#BtnGenerarCodigo").prop("disabled", !EstadoModificar);
+            $("#BtnGuardar").prop("disabled", !EstadoModificar);
+            $("#TipoPago").prop("disabled", !EstadoModificar);
+        }
+        function LimpiarDatos() {
+            $("#IdVale").val(0);
+            $("#IdPersonaCompra").val(0);
+            $("#NombreClienteCompra").val("");
+            $("#IdPersonaConsume").val(0);
+            $("#NombreClienteConsume").val("");
+            $("#Codigo").val("");
+            $("#Monto").val("0");
+            $("#TipoPago").val(0);
+            $("#alertaok").hide();
+            $("#alertaok").html("");
+        }
+        function Guardar() {
+            var Obj = {
+                Id: $("#IdVale").val(),
+                IdPersonaPagaVale: $("#IdPersonaCompra").val(),
+                NombreClientePagaVale: $('#NombreClienteCompra').val(),
+                IdPersonaConsumeVale: $("#IdPersonaConsume").val(),
+                NombreClienteConsume: $('#NombreClienteConsume').val(),
+                Codigo: $("#Codigo").val(),
+                IdTipoPago: $('#TipoPago').val(),
+                Monto: $("#Monto").val()
+            };
+            $.ajax({
+                url: '@Url.Action("Guardar","Vale")',
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(Obj),
+                success: function (O) {
+                    if (O.responce) {
+                        ImprimirComprobantePagoVale(O.IdVale);
+                        Cancelar();
+                        AllVales(1, 1);
+                    }
+                    MostarInfSave(O.StatusSave);
+                }
+            });
+        };
+    </script>
+}
+
+

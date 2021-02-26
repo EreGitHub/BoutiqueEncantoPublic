@@ -1,0 +1,401 @@
+﻿
+@{
+    ViewBag.Title = "Inicio";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-2">
+    <h4>Módulo Historico ventas<span style="font-size:12px;color:#808080"> Encantó boutique Tarija</span></h4>
+    <div class="card  mb-3 m-1">
+        <div class="card-body">
+            <div class="row">
+                <input type="hidden" id="IdVenta" value="0" />
+                <div class="col-lg-10 col-md-10 col-sm-10">
+                    <div class="input-group" style="margin-bottom:5px">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="TxtBuscarPersona" placeholder="Buscar....">
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-2">
+                    <input type="date" class="form-control" id="FechaVentasRealizadas" placeholder="Buscar....">
+                </div>
+            </div>
+            <button type="button" onclick="AllVentas(1)" style="margin-right:3px" class="btn mb-1 btn-block btn-outline-primary"><i class="fa fa-search"></i> </button>
+            <h4 class="form-section" style="margin-bottom:10px"><i class="fas fa-cogs"></i> Lista Ventas Consumidas</h4>
+
+            <div class="row" id="VentasHtml">
+            </div>
+            <div id="Inicio" style="width:100%;padding:17% 0 17% 0">
+                <h1 class="text-muted text-center"><i class="fa fa-frown-o"></i> SIN REGISTRO</h1>
+            </div>
+            <div class="text-center">
+                <ul class='pagination justify-content-end' id="PageVentaAnulacion"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Modal_RealizarPago" tabindex="-1" role="dialog" style="overflow-y:scroll">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Realizar Pago</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="IdVenta" value="0" />
+                <label>Pagar con :</label>
+                <select id="TipoPago" class="form-control">
+                    <option value="0">Select Pago</option>
+                </select>
+                <label>Monto a Pagar</label>
+                <input type="number" id="MontoPagar" class="form-control text-center" value="0" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="PagarMonto()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Modal_DetallePagos" tabindex="-1" role="dialog" style="overflow-y:scroll">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalle Pagos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="containerCustom table-responsive">
+                    <table class='table table-hover table-sm' style='font-size:12px;margin-top:5px'>
+                        <thead>
+                            <tr style="background-color:#17a2b8;border-color:#17a2b8;color:white">
+                                <th width='1px'>Nº</th>
+                                <th>Fecha pago</th>
+                                <th>Tipo Pago</th>
+                                <th>Monto</th>
+                                <th width="1px"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="DetallePagosHtml"></tbody>
+                    </table>
+                </div>
+                <hr style="margin:6px 0 0 0">
+                <div style="margin-top:8px" class="footer">
+                    <div class="row">
+                        <div class="col-6">
+                        </div>
+                        <div class="col-6">
+                            <div class="alert alert-success text-center" style="margin:0px 0 0px 0">
+                                Suma Total: <span id="SumaTotalDetalle">0</span> (Bs.)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Modal_NuevaFecha" tabindex="-1" role="dialog" style="overflow-y:scroll">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nueva Fecha</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <input type="date" class="form-control" id="ProximaFechaCobro" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="AgregarProximaFechaCobro()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Modal_DetalleEliminar" tabindex="-1" role="dialog" style="overflow-y:scroll">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fa fa-ban"></i> Motivo anulacion</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">                
+                <textarea class="form-control" placeholder="Motivo anulacion venta" style="height:100px" id="Descripcion"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-times-circle" aria-hidden="true"></i> Cancelar</button>
+                <button type="button" class="btn btn-outline-primary" onclick="AnularVenta()"><i class="fa fa-check-circle" aria-hidden="true"></i> Anular</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Modal_DetalleVenta" tabindex="-1" role="dialog" style="overflow-y:scroll">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-cogs"></i> Detalle Venta</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="DetalleVentaVale" style="display:none">
+                    <div class="row">
+                        <div class="col-xl-6 col-sm-6 col-lg-4 col-12">
+                            <label>Persona paga vale</label>
+                            <input type="text" id="Modal_PersonaPagaVale" class="form-control text-center" disabled />
+                            <label>Codigo</label>
+                            <input type="text" id="Modal_CodigoVale" class="form-control text-center" disabled />
+                            <label>Fecha</label>
+                            <input type="text" id="Modal_FechaVale" class="form-control text-center" disabled />
+                        </div>
+                        <div class="col-xl-6 col-sm-6 col-lg-4 col-12">
+                            <label>Persona consume vale</label>
+                            <input type="text" id="Modal_PersonaConsumeVale" class="form-control text-center" disabled />
+                            <label>Monto</label>
+                            <input type="text" id="Modal_MontoVale" class="form-control text-center" disabled />
+                            <label>Tipo pago</label>
+                            <input type="text" id="Modal_TipoPagoVale" class="form-control text-center" disabled />
+                        </div>
+                    </div>
+                    <label>Cajero</label>
+                    <input type="text" id="Modal_UsuarioVale" class="form-control text-center" disabled />
+                    <div class="containerCustom table-responsive" id="TableDetalleVale" style="margin-top:5px;display:none">
+                        <table class='table table-hover table-sm' style='font-size:12px;'>
+                            <thead>
+                                <tr style="background-color:#17a2b8;border-color:#17a2b8;color:white">
+                                    <th style="text-align:center">Monto</th>
+                                    <th style="text-align:center">Estado</th>
+                                    <th width="1px"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="DetalleValeTableHtml">
+                                <tr><td>1</td><td style='text-align:center'>20</td><td>Consumido</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="DetalleVentaCredito" style="display:none">
+                    <div class="row">
+                        <div class="col-xl-6 col-sm-6 col-lg-6 col-6">
+                            <label>Estado pago credito</label>
+                            <input type="text" id="Modal_EstadoPagoCredito" class="form-control text-center" disabled />
+                        </div>
+                        <div class="col-xl-6 col-sm-6 col-lg-6 col-6">
+                            <label>Monto Pagado</label>
+                            <input type="text" id="Modal_MontoPagadoCrdito" class="form-control text-center" disabled />
+                        </div>
+                    </div>
+                    <text style="height:auto;margin-top:5px" class="form-control text-center">
+                        <div style="width:100%;padding:5% 0 5% 0">
+                            <h1 class="text-muted text-center" id="MensageEstadoPago"> SIN REGISTRO</h1>
+                        </div>
+                    </text>
+                </div>
+                <h4 class="form-section" style="margin-bottom:10px"><i class='fas fa-cogs'></i> Detalle </h4>
+                <div class="row" id="DetalleVentaModalHtml">
+                </div>
+                <div class="alert alert-primary text-center" style="margin:5px 0 0px 0;padding:5px 5px 5px 5px">Total: <span id="MontoTotalVenta">0</span> (Bs.)</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-outline-secondary"><i class="far fa-times-circle"></i> Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Modal_MotivoAnulacion" tabindex="-1" role="dialog" style="overflow-y:scroll">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalle Anulación venta</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label>Cajero</label>
+                <input type="text" disabled class="form-control text-center" id="CajeroAnulado" />
+                <label>Fecha</label>
+                <input type="text" disabled class="form-control text-center" id="FechaAnulado" />
+                <label>Descripcion</label>
+                <text style="height:auto;margin-top:5px" class="form-control text-center">
+                    <div style="width:100%;padding:5% 0 5% 0">
+                        <h5 class="text-muted text-center" id="DescripcionAnulado"> ...</h5>
+                    </div>
+                </text>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-secondary"><i class="fa fa-times"></i> Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $('#VentasHtml').hide();
+        $('#Inicio').show();
+        var EstadoAperturaCaja = false;
+        VerificarAperturaCaja();
+        $(document).ready(function () {
+            var now = new Date();
+            var day = ("0" + now.getDate()).slice(-2);
+            var month = ("0" + (now.getMonth() + 1)).slice(-2);
+            var today = now.getFullYear() + "-" + (month) + "-" + (day);
+            $("#FechaVentasRealizadas").val(today);
+        });
+        window.setTimeout(function () {
+            AllVentas(1, 1);
+        }, 100);
+
+        function VerificarAperturaCaja() {
+            $.getJSON('@Url.Action("VerificarAperturaCaja", "AperturaCaja")', (O) => {
+                if (O.EstadoReturn) {
+                    EstadoAperturaCaja = true;
+                } else {
+                    toastr.error(O.EstadoMsg)
+                }
+            });
+        }
+        function AllVentas(pageIndex, is) {
+            $.getJSON('@Url.Action("All", "AnulacionVenta")', { SearchValue: $('#TxtBuscarPersona').val(), Fecha: $("#FechaVentasRealizadas").val(), PageIndex: pageIndex }, (O) => {
+                if (O.Lst.length>0) {
+                    $('#VentasHtml').empty();
+                    $('#VentasHtml').show();
+                    $('#Inicio').hide();
+                }
+                var html = "";
+                O.Lst.forEach((value, i) => {
+                    html += "<div class='col-xl-3 col-sm-6 col-lg-4 col-12'><div class='cardCarCustom card border-" + ((value.EstadoVenta == "Activo") ? "primary" : "danger") + " mb-3'><div class='card-body' style='padding:0px'><h4 class='card-title' style='text-align:center;margin-bottom: 4px;" + ((value.EstadoVenta == "Activo") ? "color:#007bff" : "color:#dc3545") + "'>Cod. Venta: " + value.CodigoVenta + "</h4></div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.2rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.TipoVenta + "</span><i class='far fa-bookmark'></i> Tipo Venta</li></ul><label class='text-center' style='margin:0 0 0 0'>Nombre del cliente:</label><div class='alert alert-primary text-center' style='margin:0px 0 0px 0;padding:0 0 0 0'>" + value.Cliente + "</div><label class='text-center' style='margin:0px 0 0 0'>Usuario</label><div class='alert alert-primary text-center' style='margin:0px 0 5px 0;padding:0 0 0 0'>" + value.Usuario + "</div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.2rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.FechaVenta + "</span><i class='far fa-calendar-check'></i> Fecha Venta</li><li class='list-group-item' style='padding:0.2rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.Monto + " (Bs.)</span><i class='fas fa-money-bill-alt'></i>" + ((value.EstadoCredito == "En Proceso") ? " Total Compra" : " Total Compra") + "</li></ul><div class='alert alert-" + ((value.EstadoVenta == "Activo") ? "primary" : "danger") + " text-center' style='margin:5px 0 0px 0;padding:0 0 0 0'>" + value.EstadoVenta + "</div><button type='button' style='margin: 3px 0 0 0' onclick='DuplicadoVenta("+value.IdVenta+")' class='btn btn-block btn-outline-primary btn-sm'><i class='fas fa-print'></i> Imprimir Duplicado</button><hr style='margin:4px 0 0 0'><div style='margin-top:5px' class='footer'><div class='row'><div class='col-6'><button type='button' onclick='DetalleVenta(" + value.IdVenta + ")' style='margin-right:0px' class='btn btn-block mb-1 btn-outline-primary btn-sm'><i class='far fa-clipboard'></i> Detalle Venta</button></div><div class='col-6'>" + ((value.EstadoVenta == "Activo") ? ((EstadoAperturaCaja) ? "<button type='button' onclick='AbrirModalAnular(" + value.IdVenta + ")' style='margin-right:3px' class='btn btn-block mb-1 btn-outline-danger btn-sm'><i class='fa fa-ban'></i> Anular</button>" : "") : "<button type='button' onclick='MotivoAnulacion(" + value.IdVenta + ")' class='btn btn-block mb-1 btn-outline-info btn-sm'>Motivo Anular</button>") + "</div></div></div></div></div>";
+                });
+                $('#VentasHtml').html(html);
+
+                var TotalPages = parseInt(O.TotalPages);
+                var rangeMin = 4;
+                var rangeMax = parseInt(TotalPages) == 1 ? 1 : rangeMin && parseInt(TotalPages) < rangeMin ? parseInt(TotalPages) : rangeMin;
+
+                const paging = { range: rangeMax, pages: TotalPages };
+                var PageArray = doPaging(pageIndex, paging);
+                var sTatusPrev = (pageIndex <= 1) ? true : false;
+                var sTatuslast = (pageIndex >= paging.pages) ? true : false;
+                var html = "<li class='page-item first " + (sTatusPrev ? "disabled" : "") + "'><a href='#' class='page-link' onclick='AllVentas(1, " + TotalPages + ")'>First</a></li><li class='page-item prev  " + (sTatusPrev ? "disabled" : "") + "'><a href='#' class='page-link' onclick='AllVentas(" + parseInt(pageIndex - 1) + ", " + TotalPages + ")'>Prev</a></li>";
+                PageArray.forEach((value, i) => {
+                    html += value.Status
+                        ?
+                        "<li class='page-item active'><a class='page-link' href='#' onclick='AllVentas(" + value.Page + ", " + TotalPages + ")'>" + value.Page + "</a></li>"
+                        :
+                        "<li class='page-item'><a class='page-link' href='#' onclick='AllVentas(" + value.Page + ", " + TotalPages + ")'>" + value.Page + "</a></li>";
+                });
+                html += "<li class='page-item next " + (sTatuslast ? "disabled" : "") + "'><a href='#' class='page-link' onclick='AllVentas(" + parseInt(pageIndex + 1) + ", " + TotalPages + ")'>Next</a></li><li class='page-item last " + (sTatuslast ? "disabled" : "") + "'><a href='#' class='page-link' onclick='AllVentas(" + paging.pages + ", " + TotalPages + ")'>Last</a></li>";
+                $('#PageVentaAnulacion').html(html);
+            });
+        }
+        function doPaging(current, { range, pages, start = 1 }) {
+            const paging = [];
+            var i = Math.min(pages + start - range, Math.max(start, current - (range / 2 | 0)));
+            const end = i + range;
+            while (i < end) {
+                var infStatus = i === current ? true : false;
+                paging.push({ Page: i++, Status: infStatus });
+            };
+            return paging;
+        }
+        function DuplicadoVenta(IdVenta) {
+            //window.setTimeout(function () {
+                var url = '@Url.Action("ImprimirComprobante", "Reportes")' + '?Tipo=PDF&IdVenta=' + IdVenta;
+                window.open(url);
+            //}, 1000);
+        }
+        function DetalleVenta(IdVenta) {
+            $.getJSON('@Url.Action("DetalleVenta", "AnulacionVenta")', { IdVenta }, (O) => {
+                $('#Modal_DetalleVenta').modal('show');
+                $('#TableDetalleVale').hide();
+                switch (O.Tipo) {
+                    case 1:
+                        $('#DetalleVentaVale').show();
+                        $('#DetalleVentaCredito').hide();
+                        if (O.oVale_.EstadoConsumo == "Consumo Parcial") {
+                            $('#TableDetalleVale').show();
+                            var html = "";
+                            O.oVale_.lstDetalleVale.forEach((value, i) => {
+                                html += "<tr><td style='text-align:center'>" + value.Monto + " (Bs.)</td><td style='text-align:center'>" + value.EstadoConsumo + "</td><td><i style='color:#007bff' class='" + ((value.EstadoConsumo == "Transferido") ? "fas fa-exchange-alt" : "fas fa-money-bill-alt") + "'></i></td></tr>";
+                            });
+                            $('#DetalleValeTableHtml').html(html);
+                        }
+                        $('#Modal_UsuarioVale').val(O.oVale_.Cajero);
+                        $('#Modal_PersonaPagaVale').val(O.oVale_.NombreClientePagaVale);
+                        $('#Modal_CodigoVale').val(O.oVale_.Codigo);
+                        $('#Modal_FechaVale').val(O.oVale_.Fecha);
+                        $('#Modal_PersonaConsumeVale').val(O.oVale_.NombreClienteConsume);
+                        $('#Modal_MontoVale').val(O.oVale_.Monto);
+                        $('#Modal_TipoPagoVale').val(O.oVale_.TipoPago);
+                        break;
+                    case 2:
+                    case 4:
+                        $('#DetalleVentaVale').hide();
+                        $('#DetalleVentaCredito').hide();
+                        break;
+                    case 3:
+                        $('#DetalleVentaVale').hide();
+                        $('#DetalleVentaCredito').show();
+                        $('#Modal_EstadoPagoCredito').val(O.oCredito.Estado);
+                        $('#Modal_MontoPagadoCrdito').val(O.oCredito.MontoPagado+" (Bs.)");
+                        if (O.oCredito.MontoPagado == O.oCredito.MontoTotalPagar) {
+                            $('#MensageEstadoPago').html("El cliente cancelo todas las cuotas");
+                        } else {
+                            $('#MensageEstadoPago').html("El cliente aun no cancelo todas las cuotas, debe cancelar un total de: " + (O.oCredito.MontoTotalPagar - O.oCredito.MontoPagado)+" (bs.)");
+                        }
+                        break;
+                    default:
+                }
+                $('#MontoTotalVenta').html(O.MontoTotalVenta);
+                var html = "";
+                O.LstDetalleVenta.forEach((value, i) => {
+                    html += "<div class='col-xl-6 col-sm-6 col-lg-4 col-12'><div class='cardCarCustom card border-primary mb-3'><div class='card-body' style='padding:0.1rem'><h4 class='card-title' style='text-align:center;margin-bottom: 5px'>" + value.Nombre + "</h4></div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.3rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.Precio + " (Bs.)</span><i class='fa fa-check'></i> Precio Uni.</li></ul><div style='margin: 0px 0 7px 0px' class='row'><div class='col-6'><div style='margin: 5px 0 5px 0px' class='card-subtitle line-on-side text-muted text-center font-small-3 mx-1'><span>Cantidad:</span></div><div class='card-subtitle line-on-side text-muted text-center font-small-3 mx-1'><span style='font-size:11px'><input type='number' disabled='' class='form-control text-center' value='" + value.Cantidad + "'></span></div></div><div class='col-6'><div style='margin: 5px 0 5px 0px' class='card-subtitle line-on-side text-muted text-center font-small-3 mx-1'><span>Descuento</span></div><div class='card-subtitle line-on-side text-muted text-center font-small-3 mx-1'><span style='font-size:11px'><input type='number' class='form-control text-center' value='" + value.Descuento + "' disabled=''></span></div></div></div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.3rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.SubTotal + " (Bs.)</span><i class='fa fa-check'></i> Sub Total.</li></ul></div></div>";
+                });
+                $('#DetalleVentaModalHtml').html(html);
+            });
+        }
+        function MotivoAnulacion(IdVenta) {
+            $('#Modal_MotivoAnulacion').modal('show');
+            $.getJSON('@Url.Action("MotivoAnulacion", "AnulacionVenta")', { IdVenta }, (O) => {
+                $('#CajeroAnulado').val(O.Cajero);
+                $('#FechaAnulado').val(O.Fecha);
+                $('#DescripcionAnulado').html(O.Descripcion);
+            });
+        }
+        function AbrirModalAnular(IdVenta) {
+            $('#Modal_DetalleEliminar').modal('show');
+            $('#IdVenta').val(IdVenta);
+            $('#Descripcion').val("");
+        }
+        function AnularVenta() {            
+            $.getJSON('@Url.Action("Anular", "AnulacionVenta")', { Venta: $('#IdVenta').val(), Descripcion: $('#Descripcion').val() }, (O) => {                
+                if (O.responce) {
+                    $('#Modal_DetalleEliminar').modal('hide');
+                    $('#IdVenta').val(0);
+                    AllVentas(1, 1);
+                }
+                MostarInfSave(O.StatusSave);
+            });
+        }
+    </script>
+}

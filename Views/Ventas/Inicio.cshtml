@@ -1,0 +1,837 @@
+﻿
+@{
+    ViewBag.Title = "Inicio";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-2">
+    <h4>Módulo Venta<span style="font-size:12px;color:#808080"> Encantó boutique Tarija</span></h4>
+    <div class="card mb-3 m-1">
+        <div class="col-sm">
+            <h4 class="form-section"><i class="fas fa-cogs"></i> Ventas</h4>
+            <label>Tipo Venta</label>
+            <select id="IdTipoPagoVenta" onchange="SelectTipoPagoView()" class="form-control"></select>
+            <input type="hidden" id="IdPersonaCliente" value="0" />
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="row">
+                        <div class="col-xl-10 col-sm-9 col-lg-8 col-9">
+                            <label>Buscar Cliente</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                                </div>
+                                <input type="text" class="form-control" disabled onkeyup="BuscarPersonaCliente()" placeholder="Buscar por Ci, Nombre" id="NombreClienteBuscar">
+                            </div>
+                            <div id="ListarPersonaCliente" style="position: absolute; z-index: 10; width: 95%" class="list-group"></div>
+                        </div>
+                        <div class="col-xl-2 col-sm-3 col-lg-4 col-3">
+                            <label>Client</label>
+                            <button type="button" data-toggle='modal' onclick="NuevoCliente()" data-target='#ModalRegistrarCliente' style="margin-right:3px" class="btn mb-1 btn-block btn-outline-primary"><i class="fa fa-plus"></i> </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="row">
+                        <div class="col-xl-6 col-sm-6 col-lg-6 col-6">
+                            <label>Monto en Contra</label>
+                            <input type="text" disabled value="0" class="form-control text-center" placeholder="Marca" id="MontoEnContra" />
+                        </div>
+                        <div class="col-xl-6 col-sm-6 col-lg-6 col-6">
+                            <label>Monto a Favor</label>
+                            <input type="text" disabled value="0" class="form-control text-center" placeholder="Stock" id="MontoAFavor" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr style="margin:5px 0 3px 0" />
+            <div id="PagoConVale">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <label>Numero Vale</label>
+                        <div class="row">
+                            <div class="col-lg-10 col-md-10 col-sm-8">
+                                <div class="input-group" style="margin-bottom:5px">
+                                    <input type="hidden" value="0" id="IdVale" />
+                                    <input type="text" class="form-control" placeholder="Introducir Codigo Vale" id="NumeroVale" />
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-sm-4">
+                                <button type="button" onclick='BuscarCodigoVale()' style="margin-right:3px" class="btn mb-1 btn-block btn-outline-primary"><i class="fa fa-search"></i> </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <label>Monto a consumir (Bs.)</label>
+                                <input type="text" disabled value="0" class="form-control text-center" id="MontoAConsumir" />
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <label>Monto no consumido (Bs.)</label>
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-6 col-sm-6" style="margin-bottom:5px">
+                                        <input type="text" disabled value="0" class="form-control text-center" id="MontoNoConsumido" />
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-6">
+                                        <button type="button" data-toggle="tooltip" data-placement="top" title="Transferir a monto a Favor" onclick="AbrirModalDeTranferencia()" style="margin-right:3px" class="btn mb-1 btn-block btn-outline-primary"><i class="fas fa-exchange-alt"></i> Transferir</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="PagoAlCredito">
+                <div class="row">
+                    <div class="col-lg-6 col-md-12 col-sm-12">
+                        <label>Pagar con :</label>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <select id="TipoPago" class="form-control" style="margin-bottom:5px">
+                                    <option value="0">Select Pago</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <button type="button" onclick="AgregarSaldoAPagarCreditoAdelantado()" style="margin-right:3px" class="btn mb-1 btn-block btn-outline-primary"><i class="fa fa-plus"></i> Agregar monto a cuenta</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-12 col-sm-12">
+                        <div class="row">
+                            <div class="col-xl-6 col-sm-6 col-lg-6 col-6">
+                                <label>A cuenta</label>
+                                <input type="number" value="0" disabled class="form-control text-center" id="SaldoAPagarPorAdelantado" />
+                            </div>
+                            <div class="col-xl-6 col-sm-6 col-lg-6 col-6">
+                                <label>Próxima fecha de cobro</label>
+                                <input type="date" id="ProximaFechaCobro" disabled class="form-control text-center" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="MensajeMontoFavorConsumir">
+                <input type="hidden" id="UsarMontoAFavorBool" value="false" />
+                <h1 class="text-muted text-center">
+                    Monto consumido: <span id="MontoFavorConsumido" style="font-size:40px;margin-right:3px"> 0</span>(Bs.)
+                </h1>
+            </div>
+            <hr style="margin:5px 0 3px 0" />
+            <label style="margin-top:5px">Buscar Producto</label>
+            <div class="row" style="margin-bottom:5px">
+                <div class="col-lg-10 col-md-10 col-sm-10">
+                    <div class="input-group" style="margin-bottom:5px">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                        </div>
+                        <input type="text" class="form-control" disabled id="TxtProductParametro" placeholder="Buscar Producto..." aria-label="Recipient's username" aria-describedby="basic-addon2">
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-2">
+                    <button type="button" onclick='BuscarProductos()' style="margin-right:3px" class="btn mb-1 btn-block btn-outline-primary"><i class="fa fa-search"></i> </button>
+                </div>
+            </div>
+            <h4 class="form-section" style="margin-bottom:12px"><i class="fas fa-clipboard-check"></i> Lista productos por vender</h4>
+            <div class="row" id="ProductosSeleccionadosHtml">
+            </div>
+            <div id="Inicio" style="width:100%;padding:6% 0 6% 0">
+                <h1 class="text-muted text-center" id="TituloInicio"> SIN PRODUCTOS</h1>
+            </div>
+            <div class="alert alert-success text-center" style="margin-top: 8px;">Total a pagar: <span id="MontoTotalSuma">0 </span> (Bs.)</div>
+            <hr style="margin-bottom:0px" />
+            @*<button type="button" id="BtnUsarMontoFavor" class="btn btn-secondary btn-block" style="margin-bottom:10px; display:none" onclick="UsarMontoFavor()"><i class="fas fa-hand-holding-usd" aria-hidden="true"></i> Usar monto a favor</button>*@
+            <div class="row" style="margin-top:8px">
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <button type="button" id="BtnCancelar" class="btn btn-danger btn-block" style="margin-bottom:10px" onclick="Cancelar()"><i class="far fa-times-circle" aria-hidden="true"></i> Cancelar</button>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <button type="button" id="BtnGuardar" class="btn btn-success btn-block" style="margin-bottom:10px" onclick="GuardarVenta()"><i class="far fa-check-circle" aria-hidden="true"></i> Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalRegistrarCliente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Registro Cliente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label>Nombre</label>
+                <input type="text" class="form-control" placeholder="Nombre" id="NombreCliente" />
+                <label>Apellido Paterno</label>
+                <input type="text" class="form-control" placeholder="Apellido Paterno" id="ApaternoCliente" />
+                <label>Apellido Materno</label>
+                <input type="text" class="form-control" placeholder="Apellido Materno" id="AmaternoCliente" />
+                <label>Ci</label>
+                <input type="text" class="form-control" placeholder="Ci" id="CiCliente" />
+                <label>Domicilio</label>
+                <input type="text" class="form-control" placeholder="Domicilio" id="DomicilioCliente" />
+                <label>Celular</label>
+                <input type="text" class="form-control" placeholder="Celular" id="CelularCliente" />
+                <label>Telefono</label>
+                <input type="text" class="form-control" placeholder="Telefono" id="TelefonoCliente" />
+                <label>Sexo</label>
+                <select id="SexoCliente" class="form-control">
+                    <option value="M">Masculino</option>
+                    <option value="F">Femenino</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-ban" aria-hidden="true"></i> Cancelar</button>
+                <button type="button" class="btn btn-outline-primary" onclick="GuardarCliente()"><i class="fa fa-check" aria-hidden="true"></i> Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalBuscarProducto" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Productos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row" id="ProductosHtml">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-ban" aria-hidden="true"></i> Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Modal_TrasferirMontoAFavor" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Transferir Monto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label>Monto a transferir:</label>
+                <input type="text" disabled class="form-control text-center" id="MontoTransferirModal" />
+                <label>Nombre del cliente:</label>
+                <input type="text" disabled class="form-control text-center" id="NombreClienteModal" />
+                <label>Justificativo de la transferencia</label>
+                <textarea class="form-control" placeholder="Justificativo" id="DetalleValeTrasnferir"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-ban" aria-hidden="true"></i> Cancelar</button>
+                <button type="button" class="btn btn-outline-primary" onclick="TransferirAMontoAFavor()"><i class="fa fa-check" aria-hidden="true"></i> Transferir</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Modal_MensajeMontoFavor" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-hand-holding-usd"></i> Monto a favor</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h1 class="text-muted text-center" id="MontoFavorModalMensaje"></h1>
+                <hr style="margin: 15px 0 5px 0;" />
+                <div class="row text-muted text-center">
+                    <div class="col-6">
+                        <h4>Monto en efectivo</h4>
+                        <h6 id="MontoFavorEfectivoConsumir">0 Bs.</h6>
+                    </div>
+                    <div class="col-6">
+                        <h4>Monto en tarjeta</h4>
+                        <h6 id="MontoFavorTarjetaConsumir">0 Bs.</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" onclick="UsarMontoFavor(false)"><i class="fa fa-times-circle" aria-hidden="true"></i> Cancelar</button>
+                <button type="button" class="btn btn-outline-primary" onclick="UsarMontoFavor(true)"><i class="fa fa-check-circle" aria-hidden="true"></i> Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Modal_MensajeMontoDeuda" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#FF5533">
+                <h5 class="modal-title" id="exampleModalLabel" style="color:white">Mensaje...</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" style="color:white">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h2 class="text-muted text-center" id="MontoDeudaModalMensaje"></h2>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn mb-1 btn-block btn-outline-danger" data-dismiss="modal"><i class="fa fa-ban" aria-hidden="true"></i> Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Modal_SaldoPagarVentaCredito" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">A cuenta</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label>Monto a Cuenta</label>
+                <input type="number" class="form-control text-center" id="SaldoPagarModal" value="0" />
+                <label>Proxima fecha de cobro</label>
+                <input type="date" id="FechaProximoSaldoModal" class="form-control text-center" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-ban" aria-hidden="true"></i> Cancelar</button>
+                <button type="button" class="btn btn-outline-primary" onclick="AgregarSaldoPagarAdelantoCredito()"><i class="fa fa-check" aria-hidden="true"></i> Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        var ArrayProductos = [];
+        var EstadoModificar = false;
+        var MaximoMontoPermitido = 0;
+        $('#ProductosSeleccionadosHtml').hide();
+        $('#PagoConVale').hide();
+        $('#PagoAlCredito').hide();
+        $('#MensajeMontoFavorConsumir').hide();
+        VerificarAperturaCaja();
+        CargarMontoPermitido();
+        function CargarMontoPermitido() {
+            $.getJSON('@Url.Action("ValidarMontoPermitido", "Ventas")', null, function (O) {
+                MaximoMontoPermitido = O;
+            });
+        }
+        function VerificarAperturaCaja() {
+            $.getJSON('@Url.Action("VerificarAperturaCaja", "AperturaCaja")', (O) => {
+                if (O.EstadoReturn) {
+                    AllTipoVenta();
+                    CargarTipoPago();
+                    $('#IdTipoPagoVenta').prop("disabled", false);
+                    $('#TituloInicio').html("SIN PRODUCTOS");
+                } else {
+                    toastr.error(O.EstadoMsg)
+                    $('#IdTipoPagoVenta').prop("disabled", true);
+                    $('#BtnGuardar').prop("disabled", true);
+                    $('#BtnCancelar').prop("disabled", true);
+                    $('#TituloInicio').html(O.EstadoMsg);
+                }
+            });
+        }
+        function AllTipoVenta() {
+            $('#IdTipoPagoVenta').append("<option value='0'>Select tipo pago</option>");
+            $.getJSON('@Url.Action("AllTipoVenta", "TipoVenta")', (O) => {
+                O.forEach((value, i) => {
+                    $('#IdTipoPagoVenta').append("<option value='" + value.Id + "'>" + value.Nombre + "</option>");
+                });
+            });
+        }
+        function SelectTipoPagoView() {
+            $("#NombreClienteBuscar").prop("disabled", false);
+            $("#TxtProductParametro").prop("disabled", true);
+            LimpiarCampos();
+            LimpiarArray();
+            switch (parseInt($('#IdTipoPagoVenta').val())) {
+                case 0:
+                    $('#PagoConVale').hide();
+                    $('#PagoAlCredito').hide();
+                    $('#MensajeMontoFavorConsumir').hide();
+                    $("#NombreClienteBuscar").prop("disabled", true);
+                    break;
+                case 1:
+                    $('#PagoConVale').show();
+                    $('#PagoAlCredito').hide();
+                    $("#NombreClienteBuscar").prop("disabled", true);
+                    $('#MensajeMontoFavorConsumir').hide();
+                    break;
+                case 2:
+                case 4:
+                    $('#PagoConVale').hide();
+                    $('#PagoAlCredito').hide();
+                    $('#MensajeMontoFavorConsumir').show();
+                    $("#NombreClienteBuscar").prop("disabled", false);
+                    break;
+                case 3:
+                    $('#PagoConVale').hide();
+                    $('#PagoAlCredito').show();
+                    $('#MensajeMontoFavorConsumir').hide();
+                    $("#NombreClienteBuscar").prop("disabled", false);
+                    break;
+                //case 4:
+                //    $('#PagoConVale').hide();
+                //    $('#PagoAlCredito').hide();
+                //    $('#MensajeMontoFavorConsumir').show();
+                //    $("#NombreClienteBuscar").prop("disabled", false);
+                //    break;
+                default:
+                    break;
+            }
+        }
+        function LimpiarArray() {
+            ArrayProductos.length = 0;
+            ListarProducto();
+        }
+        function LimpiarCampos() {
+            $('#IdPersonaCliente').val(0);
+            $('#NombreClienteBuscar').val("");
+            $('#MontoEnContra').val(0);
+            $('#MontoAFavor').val(0);
+
+            $('#IdVale').val(0);
+            $('#NumeroVale').val("");
+            $('#MontoAConsumir').val(0);
+            $('#MontoNoConsumido').val(0);
+
+            $('#TipoPago').val(0);
+            $('#SaldoAPagarPorAdelantado').val(0);
+            $('#ProximaFechaCobro').val("");
+            $('#SaldoPagarModal').val(0);
+            $('#FechaProximoSaldoModal').val("");
+
+            $('#UsarMontoAFavorBool').val(false);
+            $('#MontoFavorConsumido').html("0");
+
+            $('#TxtProductParametro').val("");
+            $('#MontoTotalSuma').html("0")
+
+            $('#MontoTransferirModal').val('0 Bs.');
+            $('#NombreClienteModal').val("");
+            $('#DetalleValeTrasnferir').val("");
+
+            $('#MontoFavorModalMensaje').html("0");
+            $('#MontoDeudaModalMensaje').html("El cliente cuenta con una deuda de 0 (Bs.). <br /> Por lo tanto no se puede realizar ninguna venta");            
+        }
+        function BuscarCodigoVale() {
+            var TempCodVale = $('#NumeroVale').val();
+            $.getJSON('@Url.Action("BuscarCodigoVale", "Vale")', { Codigo: $('#NumeroVale').val() }, (O) => {                
+                if (O.Estado) {
+                    $("#TxtProductParametro").prop("disabled", false);
+                    $('#IdVale').val(O.vale.IdVale);
+                    $('#MontoAConsumir').val(O.vale.MontoValeAConsumir);
+                    $('#IdPersonaCliente').val(O.vale.IdPersonaConsume);
+                    $('#NombreClienteBuscar').val(O.vale.PersonaConsumeVale);
+                    $('#MontoAFavor').val(O.cuentaFavorDeuda.MontoFavor);
+                    $('#MontoEnContra').val(O.cuentaFavorDeuda.Deuda);
+                } else {
+                    toastr.warning('El codigo vale ya no esta disponible, es posible que fue consumido');
+                    LimpiarCampos();
+                    LimpiarArray();
+                    $('#NumeroVale').val(TempCodVale);
+                    TempCodVale = "";
+                    $("#TxtProductParametro").prop("disabled", true);
+                }
+            });
+        }
+        function CargarTipoPago() {
+            $.getJSON('@Url.Action("TipoVentaPago", "TipoVenta")', function (O) {
+                O.forEach((value, i) => {
+                    $('#TipoPago').append("<option value='" + value.Id + "'>" + value.Nombre + "</option>");
+                });
+            });
+        }
+        function BuscarPersonaCliente() {
+            $('#ListarPersonaCliente').html("");
+            var Obj = { TxtParametro: $('#NombreClienteBuscar').val() };
+            $.getJSON('@Url.Action("BuscarPersona", "Persona")', Obj, (O) => {                
+                if (O != null) {
+                    O.forEach(value => {
+                        $('#ListarPersonaCliente').append("<a style='text-decoration:none' onclick='SeleccionarPersonaCompra(" + value.Id + ",\"" + value.Nombre + "\",\"" + value.Apaterno + "\",\"" + value.Amaterno + "\")' class='list-group-item' ><div style='display: inline-block'><i class='fa fa-user-o' style='margin-right: 5px'></i>" + value.Nombre + " " + value.Apaterno + " " + value.Amaterno + " " + value.Ci + "</div></a>");
+                    });
+                }
+            });
+        }
+        function SeleccionarPersonaCompra(IdPersona, Nombre, Apaterno, Amaterno) {
+            $.getJSON('@Url.Action("BuscarDatosPersonaDeudaMontoFavor", "Vale")', { IdPersona }, (O) => {                
+                LimpiarArray();
+                $('#MontoTotalSuma').html('0')
+                $('#IdPersonaCliente').val(IdPersona);
+                $('#NombreClienteBuscar').val(Nombre + ' ' + Apaterno + ' ' + Amaterno);
+                $('#MontoAFavor').val(O.o.MontoFavor);
+                $('#MontoEnContra').val(O.o.Deuda);
+                if (O.PermiteVenta) {
+                    $("#TxtProductParametro").prop("disabled", false);
+                    if (O.o.MontoFavor > 0) {
+                        if (parseInt($('#IdTipoPagoVenta').val()) != 3) {                            
+                            $('#Modal_MensajeMontoFavor').modal('show');
+                            $('#MontoFavorModalMensaje').html("El cliente cuenta con un monto a favor de: " + O.o.MontoFavor + " (Bs.) <br /> ¿Desea usar ese monto?");
+                            $('#MontoFavorEfectivoConsumir').html(O.Efectivo + " Bs.");
+                            $('#MontoFavorTarjetaConsumir').html(O.Tarjeta + " Bs.");
+                        }
+                    }
+                } else {
+                    $('#Modal_MensajeMontoDeuda').modal('show');
+                    $('#MontoDeudaModalMensaje').html("El cliente cuenta con una deuda de:<br /> " + O.o.Deuda + " (Bs.) <br /> Por lo tanto no se puede realizar ninguna venta");
+                    $('#IdPersonaCliente').val(0);
+                    $('#MontoAFavor').val(0);
+                    $('#MontoEnContra').val(0);
+                    $("#TxtProductParametro").prop("disabled", true);
+                }
+                $('#ListarPersonaCliente').empty();
+            });
+        }
+        function UsarMontoFavor(Estado) {
+            $('#Modal_MensajeMontoFavor').modal('hide');
+            $('#MontoFavorConsumido').html(0);
+            $('#UsarMontoAFavorBool').val(Estado);
+        }        
+        function BuscarProductos() {
+            $('#ProductosHtml').empty();
+            if ($('#TxtProductParametro').val() != "") {
+                $('#ModalBuscarProducto').modal('show');
+                $.getJSON('@Url.Action("BuscarProducto", "Producto")', { SearchValue: $('#TxtProductParametro').val() }, (O) => {
+                    var Html = "";
+                    O.forEach((value, i) => {
+                        Html += "<div class='col-xl-4 col-sm-6 col-lg-4 col-12'><div class='cardCarCustom card border-primary mb-3'><div class='card-body' style='padding:0.1rem'><h4 class='card-title' style='text-align:center;margin-bottom: 5px'>" + value.Nombre + "</h4></div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.3rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.PrecioVenta + " (Bs.) </span><i class='fa fa-graduation-cap'></i> Precio</li></ul><div class='row'><div class='col-6'><div style='margin: 5px 0 0px' class='card-subtitle line-on-side text-muted text-center font-small-3 mx-1'><span>Categoria :</span></div><hr style='margin: 0px 0px 3px 0px '><div class='card-subtitle line-on-side text-muted text-center font-small-3 mx-1'><span style='font-size:11px'>" + value.Categoria + "</span></div></div><div class='col-6'><div style='margin: 5px 0 0px' class='card-subtitle line-on-side text-muted text-center font-small-3 mx-1'><span>Marca :</span></div><hr style='margin: 0px 0px 3px 0px '><div class='card-subtitle line-on-side text-muted text-center font-small-3 mx-1'><span style='font-size:11px'>" + value.Marca + "</span></div></div></div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.3rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.Stock + "</span><i class='fa fa-graduation-cap'></i> Stock</li></ul><div class='row'><div class='col-6'><div style='margin: 5px 0 5px 0px' class='card-subtitle line-on-side text-muted text-center font-small-3 mx-1'><span>Cantidad:</span></div><div class='card-subtitle line-on-side text-muted text-center font-small-3 mx-1'><span style='font-size:11px'><input type='number' class='form-control text-center' value='1' id='CantidadProductoCliente" + value.Id + "'></span></div></div><div class='col-6'><div style='margin: 5px 0 5px 0px' class='card-subtitle line-on-side text-muted text-center font-small-3 mx-1'><span>Descuento:</span></div><div class='card-subtitle line-on-side text-muted text-center font-small-3 mx-1'><span style='font-size:11px'><input type='number' class='form-control text-center' value='0' id='DescuentoProductoCliente" + value.Id + "'></span></div></div></div><hr style='margin:8px 0 0 0'><div style='margin-top:8px' class='footer'><button type='button' onclick='AgregarProduto(" + value.Id + ",\"" + value.Nombre + "\"," + value.PrecioVenta + ","+value.Stock+")' class='btn btn-block mb-1 btn-outline-primary btn-sm'>Agregar <i class='fas fa-share'></i></button></div></div></div>";
+                    });
+                    $('#ProductosHtml').append(Html);
+                });
+            }
+        }
+        function VerificarDatosNegativosArray(ObjArray) {
+            var Estado = true;
+            if (ObjArray.Cantidad < 0 || ObjArray.Descuento < 0) {
+                Estado = false;
+            }
+            return Estado;
+        }
+        function AgregarProduto(IdProducto, Nombre, Precio, Stock) {
+            var Obj = {
+                IdProducto: IdProducto,
+                Nombre: Nombre,
+                Precio: Precio,
+                Cantidad: parseInt($('#CantidadProductoCliente' + IdProducto).val()),
+                Descuento: parseInt($('#DescuentoProductoCliente' + IdProducto).val()),
+                SubTotal: SubTotalProductos(Precio, parseInt($('#CantidadProductoCliente' + IdProducto).val()), parseInt($('#DescuentoProductoCliente' + IdProducto).val()))
+            };
+            if (ValidarVentaPrecio(Obj)) {
+                if (Obj.Cantidad <= Stock) {
+                    if (VerificarDatosNegativosArray(Obj)) {
+                        if (!VerificarSiExisteObjProducto(IdProducto)) {
+                            $('#ModalBuscarProducto').modal('hide');
+                            var SumaTotalProductos;
+                            switch (parseInt($('#IdTipoPagoVenta').val())) {
+                                case 0:
+                                    break;
+                                case 1:
+                                    if (ValidarVentaVale(Obj.SubTotal)) {
+                                        ArrayProductos.push(Obj);
+                                        SumaTotalProductos = SumaTotal();
+                                        $('#MontoNoConsumido').val($('#MontoAConsumir').val() - SumaTotalProductos);
+                                        $('#MontoTotalSuma').html(SumaTotalProductos);
+                                    } else {
+                                        toastr.warning('Este producto supera el monto establedico de ' + $('#MontoAConsumir').val() + ' (Bs.)');
+                                        toastr.warning('Debe selecccionar un producto menor o igual a: ' + $('#MontoNoConsumido').val() + ' (Bs.)');
+                                    }
+                                    break;
+                                case 2:
+                                case 4:
+                                    ArrayProductos.push(Obj);
+                                    SumaTotalProductos = SumaTotal();
+                                    CalcularMontoTotalMontoConsumido(SumaTotalProductos);
+                                    break;
+                                case 3:
+                                    ArrayProductos.push(Obj);
+                                    SumaTotalProductos = SumaTotal();
+                                    ValidarVentaPorCreditoMontos(SumaTotalProductos);
+                                    break;
+                                default:
+                            }
+                            ListarProducto();
+                            $('#TxtProductParametro').val("");
+                        } else {
+                            toastr.warning("El producto ya fue seleccionado");
+                        }
+                    } else {
+                        toastr.warning('El campo Cantidad o Descuento debe ser mayor a Cero');
+                    }
+                } else {
+                    toastr.warning('La cantidad debe ser menor o igual al stock');
+                }
+            } else {
+                toastr.warning("El valor supero al monto permitido de 700 Bs");
+            }
+        }
+        function SubTotalProductos(Precio,Cantidad,Descuento) {
+            return (Precio * Cantidad) - Descuento;
+        }
+        function CalcularMontoTotalMontoConsumido(SumaTotalProductos) {
+            if (JSON.parse($('#UsarMontoAFavorBool').val())) {
+                if (SumaTotalProductos <= $('#MontoAFavor').val()) {
+                    $('#MontoFavorConsumido').html(SumaTotalProductos);
+                } else {
+                    $('#MontoFavorConsumido').html($('#MontoAFavor').val());
+                }
+            }
+            $('#MontoTotalSuma').html(SumaTotalProductos - (JSON.parse($('#UsarMontoAFavorBool').val()) ? parseInt($('#MontoFavorConsumido').html()) : 0));
+        }
+        function ValidarVentaPorCreditoMontos(SumaTotalProductos) {
+            if (SumaTotalProductos <= $('#SaldoAPagarPorAdelantado').val()) {
+                $('#MontoTotalSuma').html("0");
+            } else {
+                $('#MontoTotalSuma').html(SumaTotalProductos - parseInt($('#SaldoAPagarPorAdelantado').val()));
+            }
+        }
+        function ValidarVentaPrecio(Obj) {
+            if (parseInt($('#MontoEnContra').val()) > 0) {
+                var Suma = SumaTotal() + parseInt($('#MontoEnContra').val()) + Obj.SubTotal;
+                console.log(MaximoMontoPermitido)
+                return Suma <= MaximoMontoPermitido;
+            }
+            return true;
+        }
+        function ListarProducto() {
+            CantidadProductoAgregadosArray();
+            $('#ProductosSeleccionadosHtml').empty();
+            var Cont = 0;
+            ArrayProductos.forEach((value, i) => {
+                $('#ProductosSeleccionadosHtml').append("<div class='col-xl-3 col-sm-6 col-lg-4 col-12'><div class='cardCarCustom card border-primary mb-1'><div class='card-body' style='padding:0.1rem'><h4 class='card-title' style='text-align:center;margin-bottom: 5px'>" + value.Nombre + "</h4></div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.3rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.Precio + " (Bs.)</span><i class='fa fa-check'></i> Precio Uni.</li></ul><div style='margin: 0px 0 7px 0px' class='row'><div class='col-6'><div style='margin: 5px 0 5px 0px' class='card-subtitle line-on-side text-muted text-center font-small-3 mx-1'><span>Cantidad:</span></div><div class='card-subtitle line-on-side text-muted text-center font-small-3 mx-1'><span style='font-size:11px'><input type='number' disabled class='form-control text-center' value='" + value.Cantidad + "' /></span></div></div><div class='col-6'><div style='margin: 5px 0 5px 0px' class='card-subtitle line-on-side text-muted text-center font-small-3 mx-1'><span>Descuento</span></div><div class='card-subtitle line-on-side text-muted text-center font-small-3 mx-1'><span style='font-size:11px'><input type='number' class='form-control text-center' value='" + value.Descuento + "' disabled /></span></div></div></div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.3rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.SubTotal + " (Bs.)</span><i class='fa fa-check'></i> Sub Total.</li></ul><div style='margin-top:5px' class='footer'><span class='float-left text-primary'><b style='font-size: 15px'>/" + (Cont += 1) + "/</b></span><span class='tags float-right'><button type='button' onclick='EliminarProducto(" + i + ")' style='margin-right:3px' class='btn mb-1 btn-outline-danger btn-sm'><i class='fa fa-trash'></i></button></span></div></div></div>");
+            });
+        }
+        function EliminarProducto(i) {
+            ArrayProductos.splice(i, 1);
+            var SumaTotalProductos = SumaTotal();
+            switch (parseInt($('#IdTipoPagoVenta').val())) {
+                case 1:
+                    $('#MontoNoConsumido').val($('#MontoAConsumir').val() - SumaTotalProductos);
+                    $('#MontoTotalSuma').html(SumaTotalProductos);
+                    break;
+                case 2:
+                    CalcularMontoTotalMontoConsumido(SumaTotalProductos);
+                    break;
+                case 3:
+                    ValidarVentaPorCreditoMontos(SumaTotalProductos);
+                    break;
+                default:
+            }
+            ListarProducto();
+        }
+        function VerificarSiExisteObjProducto(IdProducto) {
+            var Estado = false;
+            for (var i = 0; i < ArrayProductos.length; i++) {
+                if (ArrayProductos[i].IdProducto == IdProducto) {
+                    Estado = true;
+                    break;
+                }
+            }
+            return Estado;
+        }
+        function CantidadProductoAgregadosArray() {
+            if (ArrayProductos.length > 0) {
+                $('#Inicio').hide();
+                $('#ProductosSeleccionadosHtml').show();
+            } else {
+                $('#Inicio').show();
+                $('#ProductosSeleccionadosHtml').hide();
+            }
+        }
+        function ValidarVentaVale(SubTotal) {
+            var Estado = false;
+            var SumaTotalProductos = SumaTotal();
+            var SumaMontoConsumir_SumaTotalProductos = SumaTotalProductos + SubTotal;
+            if (SumaMontoConsumir_SumaTotalProductos <= $('#MontoAConsumir').val()) {
+                Estado = true;
+            }
+            return Estado;
+        }
+        function SumaTotal() {
+            var SumaTotalProductos = 0;
+            ArrayProductos.forEach((value, i) => {
+                SumaTotalProductos += (value.Precio * value.Cantidad) - value.Descuento;
+            });
+            return SumaTotalProductos;
+        }
+        function AbrirModalDeTranferencia() {
+            if (parseInt($('#MontoNoConsumido').val()) > 0) {
+                $('#Modal_TrasferirMontoAFavor').modal('show');
+                $('#NombreClienteModal').val($('#NombreClienteBuscar').val());
+                $('#MontoTransferirModal').val($('#MontoNoConsumido').val()+" (Bs.)")
+                $('#DetalleValeTrasnferir').val("");
+            } else {
+                toastr.warning('El campo MONTO NO CONSUMIDO debe ser mayor a cero');
+            }
+        }
+        function TransferirAMontoAFavor() {
+            var Obj = {
+                Monto: $('#MontoNoConsumido').val(),
+                CuentaCliente: $('#IdPersonaCliente').val(),
+                Observacion: $('#DetalleValeTrasnferir').val(),
+                IdVale: $('#IdVale').val()
+            };
+            $.getJSON('@Url.Action("TransferirAMontoAFavor", "Vale")', Obj, function (O) {
+                if (O.responce) {
+                    $('#Modal_TrasferirMontoAFavor').modal('hide');
+                    $('#MontoAConsumir').val(O.MontoConsumido);
+                    $('#MontoNoConsumido').val(0);
+
+                    $('#NombreClienteModal').val("");
+                    $('#MontoTransferirModal').val("0 Bs")
+                    $('#DetalleValeTrasnferir').val("");
+                }
+                MostarInfSave(O.StatusSave);
+            });
+        }
+        function AgregarSaldoAPagarCreditoAdelantado() {
+            $('#Modal_SaldoPagarVentaCredito').modal('show');
+            $('#SaldoPagarModal').val($('#SaldoAPagarPorAdelantado').val());
+            $('#FechaProximoSaldoModal').val($('#ProximaFechaCobro').val());
+        }
+        function AgregarSaldoPagarAdelantoCredito() {
+            if ($('#SaldoPagarModal').val() > 0 ) {
+                $('#Modal_SaldoPagarVentaCredito').modal('hide');
+                $('#SaldoAPagarPorAdelantado').val($('#SaldoPagarModal').val());
+                $('#ProximaFechaCobro').val($('#FechaProximoSaldoModal').val());
+                ValidarVentaPorCreditoMontos(SumaTotal());
+            } else {
+                toastr.warning('El monto debe ser mayor a cero')
+            }
+        }
+        function GuardarVenta() {
+            if (ArrayProductos.length != 0) {
+                $('#BtnGuardar').prop('disabled', true);
+                switch (parseInt($('#IdTipoPagoVenta').val())) {
+                    case 1:
+                        if ($('#MontoNoConsumido').val() <= 0) {
+                            var ObjDetalleVenta = {
+                                LstDetalleProducto: ArrayProductos,
+                                IdPersonaCliente: $("#IdPersonaCliente").val(),
+                                TipoVentaPago: $("#IdTipoPagoVenta").val(),
+                                IdVale: $("#IdVale").val(),
+                            };
+                            var url = '@Url.Action("GuardarVentaPorVale", "Ventas")';
+                        } else {
+                            toastr.warning('El monto sobrnate de ' + $('#MontoNoConsumido').val() + ' (Bs.) no fue consumido, es obligatorio hacer la trnasferencia del monto');
+                            $('#BtnGuardar').prop('disabled', false);
+                        }
+                        break;
+                    case 2:
+                    case 4:
+                        var ObjDetalleVenta = {
+                            LstDetalleProducto: ArrayProductos,
+                            IdPersonaCliente: $("#IdPersonaCliente").val(),
+                            TipoVentaPago: $("#IdTipoPagoVenta").val(),
+                            MontoFavorConsumido: parseInt($("#MontoFavorConsumido").html()),
+                        };
+                        var url = '@Url.Action("GuardarVentaAlContadoYtarjeta", "Ventas")';
+                        break;
+                    case 3:
+                        if (parseInt($("#MontoTotalSuma").html()) > 0) {
+                            var ObjDetalleVenta = {
+                                LstDetalleProducto: ArrayProductos,
+
+                                Fecha: $("#ProximaFechaCobro").val(),
+                                Monto: $("#SaldoAPagarPorAdelantado").val(),
+                                TipoVentaPago: $("#TipoPago").val(),
+
+                                IdPersonaCliente: $("#IdPersonaCliente").val(),
+                                TipoVentaPagoP: $("#IdTipoPagoVenta").val(),
+                            };
+                            var url = '@Url.Action("GuardarVentaAlCredito", "Ventas")';
+                        } else {
+                            toastr.warning('Es obligatorio superar el monto de: ' + $('#SaldoAPagarPorAdelantado').val() + ' (Bs.), del saldo por adelantado');
+                            $('#BtnGuardar').prop('disabled', false);
+                        }
+                        break;
+                    default:
+                        break;
+                }             
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(ObjDetalleVenta),
+                    success: function (O) {
+                        if (O.responce) {
+                            //$('#BtnGuardar').prop('disabled', false);
+                            ImprimirComprobante(O.IdVenta);
+                            LimpiarCampos();
+                            LimpiarArray();
+                            $('#IdTipoPagoVenta').val(0);
+                            SelectTipoPagoView();
+                        }
+                        $('#BtnGuardar').prop('disabled', false);
+                        MostarInfSave(O.StatusSave);                        
+                    }
+                });
+            } else {
+                toastr.warning('Debe seleccionat al menos un producto para hacer una venta');
+            }
+        }
+        function ImprimirComprobante(IdVenta) {
+            //window.setTimeout(function () {
+            var url = '@Url.Action("ImprimirComprobante", "Reportes")' + '?Tipo=PDF&IdVenta=' + IdVenta;
+            window.open(url);
+            //}, 1000);
+        }
+        function Cancelar() {
+            LimpiarCampos();
+            LimpiarArray();
+            $('#IdTipoPagoVenta').val(0);
+            SelectTipoPagoView();
+        }
+        function NuevoCliente() {
+            $("#NombreCliente").val("");
+            $("#ApaternoCliente").val("");
+            $("#AmaternoCliente").val("");
+            $("#CiCliente").val("");
+            $("#DomicilioCliente").val("");
+            $("#CelularCliente").val("");
+            $("#TelefonoCliente").val("");
+            $("#SexoCliente").val("M");
+        }
+        function GuardarCliente() {
+            var Obj = {
+                Id: 0,
+                Nombre: $("#NombreCliente").val(),
+                Apaterno: $("#ApaternoCliente").val(),
+                Amaterno: $("#AmaternoCliente").val(),
+                Ci: $("#CiCliente").val(),
+                Domicilio: $("#DomicilioCliente").val(),
+                Celular: $("#CelularCliente").val(),
+                Telefono: $("#TelefonoCliente").val(),
+                Sexo: $("#SexoCliente").val()
+            };
+            $.ajax({
+                url: '@Url.Action("Guardar","Persona")',
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(Obj),
+                success: function (O) {
+                    if (O.responce) {
+                        $('#ModalRegistrarCliente').modal('hide')
+                        $.getJSON('@Url.Action("GetDatosPersona", "Persona")', { Ci: $("#CiCliente").val() }, function (o) {
+                            $('#IdPersonaCliente').val(o.Id);
+                            $('#NombreClienteBuscar').val(o.Nombre + " " + o.Apaterno + " " + o.Amaterno);
+                        });
+                    }
+                    MostarInfSave(O.StatusSave);
+                }
+            });
+        };
+    </script>
+}

@@ -1,0 +1,741 @@
+﻿@using Venta.Models;
+@{
+    ViewBag.Title = "Apertura Caja";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int IdPerfil = 0;
+    if (User.Identity.Name != "")
+    {
+        VentaEntities db = new VentaEntities();
+        IdPerfil = db.Usuario.Single(q => q.Login == User.Identity.Name).PerfilSistema;
+    }
+}
+
+<div class="container mt-2">
+    <h4>Módulo Apertura Caja<span style="font-size:12px;color:#808080"> Encantó boutique Tarija</span></h4>
+    <div class="card mb-3 m-1">
+        <div id="InicioHtml" style="width:100%;padding:5% 0 5% 0;display:none">
+            <div class="col-sm">
+                <h1 class="text-muted text-center">Estimado usuario una o varias aperturas de caja no fueron cerradas, para solucionar este problema comuniquese con el adm.</h1>
+                <h4 class="form-section" style="margin:30px 0 20px 0"><i class="fa fa-user"></i> Lista de cajas no cerradas</h4>
+                <div class="row" id="CajasNoCerradas">
+                    <!--
+                    <div class='col-xl-4 col-sm-6 col-lg-4 col-12'>
+                        <div class='cardCarCustom card border-primary mb-3'>
+                            <div class='card-body' style='padding:0px'>
+                                <h4 class='card-title' style='text-align:center;margin-bottom: 4px;color:#007bff'>
+                                    Nº Apertura: 1
+                                </h4>
+                            </div>
+                            <ul class='list-group list-group-flush'>
+                                <li class='list-group-item' style='padding:0.2rem;font-size:12px'>
+                                    <span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>Caja 5</span>
+                                    <i class='far fa-bookmark'></i> Nº Caja
+                                </li>
+                            </ul>
+                            <label class='text-center' style='margin:0 0 0 0'>Fecha Apertura:</label>
+                            <div class='alert alert-primary text-center' style='margin:0px 0 5px 0;padding:0 0 0 0'>Sep 17 2020 12:10PM</div>
+
+                            <ul class='list-group list-group-flush'>
+                                <li class='list-group-item' style='padding:0.2rem;font-size:12px'>
+                                    <span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>300 (Bs.)</span>
+                                    <i class='fas fa-money-bill-alt'></i> Monto Incial
+                                </li>
+                            </ul>
+                            <label class='text-center' style='margin:3px 0 0 0'>Cajero:</label>
+                            <div class='alert alert-primary text-center' style='margin:0px 0 5px 0;padding:0 0 0 0'>Pepe Rios Ortega</div>
+
+                            <ul class='list-group list-group-flush'>
+                                <li class='list-group-item' style='padding:0.2rem;font-size:12px'>
+                                    <span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>Abierto</span>
+                                    <i class='fa fa-check'></i> Estado
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+                    -->
+                </div>
+            </div>
+        </div>
+        <div class="row" id="Interfaz" style="display:none">
+            <div class="col-sm-12 col-lg-5 col-md-12">
+                <div class="col-sm">
+                    <h4 class="form-section"><i class="far fa-money-bill-alt"></i> Apertura Caja</h4>
+                    <label>Cajero</label>
+                    <input type="text" disabled class="form-control" value="@ViewBag.NombreCompletoUsuarioLog" placeholder="Cajero" id="Cajero" />
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <label>Documento</label>
+                            <input type="text" disabled class="form-control" value="@ViewBag.CiLog" placeholder="Documento" id="Documento" />
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <label>Caja</label>
+                            <select id="IdCaja" disabled class="form-control"></select>
+                        </div>
+                    </div>
+                    <label>Monto Inicial en Bs</label>
+                    <input type="number" disabled value="0" class="form-control text-center" placeholder="Monto" id="MontoInialBs" />
+                    <div id="alertaok" class="alert alert-success" style="display:none;margin-top:8px"></div>
+                    <hr style="margin-bottom:2px" />
+                    <div class="row" style="margin-top:8px">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary btn-block" style="margin-bottom:10px" onclick="Cancelar()"><i class="far fa-times-circle"></i> Cancelar</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" id="BtnAperturarCaja" disabled class="btn btn-success btn-block" style="display:none;margin-bottom:10px" onclick="AperturaCaja()"><i class="far fa-check-circle"></i> Aperturar Caja</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-lg-7 col-md-12">
+                <div class="col-sm">
+                    <h4 class="form-section"><i class="far fa-money-bill-alt"></i> Cajas Aperturadas</h4>
+                    <label>Selecccionar Fecha</label>
+                    <div class="row" style="margin-bottom:5px">
+                        <div class="col-lg-10 col-md-10 col-sm-10">
+                            <div class="input-group" style="margin-bottom:5px">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                                </div>
+                                <input type="date" class="form-control" id="FechaAperturaCaja" placeholder="Buscar por Nombre..." aria-label="Recipient's username" aria-describedby="basic-addon2">
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-2">
+                            <button type="button" onclick='AllCajasAperturadasPorFecha()' style="margin-right:3px" class="btn mb-1 btn-block btn-outline-primary"><i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                    <div class="row" id="CajasAperturadasTableHtml">
+                        <!--
+                        <div class='col-xl-4 col-sm-6 col-lg-4 col-12'>
+                            <div class='cardCarCustom card border-primary mb-3'>
+                                <div class='card-body' style='padding:0px'>
+                                    <h4 class='card-title' style='text-align:center;margin-bottom: 4px;color:#007bff'>
+                                        Pepe Rios Ortega
+                                    </h4>
+                                </div>
+                                <ul class='list-group list-group-flush'>
+                                    <li class='list-group-item' style='padding:0.2rem;font-size:12px'>
+                                        <span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>Caja 5</span>
+                                        <i class='far fa-bookmark'></i> Nº Caja
+                                    </li>
+                                </ul>
+                                <label class='text-center' style='margin:0 0 0 0'>Fecha:</label>
+                                <div class='alert alert-primary text-center' style='margin:0px 0 3px 0;padding:0 0 0 0'>Sep 17 2020 12:10PM</div>
+
+                                <label class='text-center' style='margin:0 0 0 0'>Fecha Apertura:</label>
+                                <div class='alert alert-primary text-center' style='margin:0px 0 5px 0;padding:0 0 0 0'>Sep 17 2020 12:10PM</div>
+
+
+                                <ul class='list-group list-group-flush'>
+                                    <li class='list-group-item' style='padding:0.2rem;font-size:12px'>
+                                        <span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>300 (Bs.)</span>
+                                        <i class='fas fa-money-bill-alt'></i> Monto Incial
+                                    </li>
+                                </ul>
+                                <label class='text-center' style='margin:3px 0 0 0'>Monto Acumulado:</label>
+                                <div class='alert alert-primary text-center' style='margin:0px 0 5px 0;padding:0 0 0 0'>500 (Bs.)</div>
+
+                                <ul class='list-group list-group-flush'>
+                                    <li class='list-group-item' style='padding:0.2rem;font-size:12px'>
+                                        <span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>Abierto</span>
+                                        <i class='fa fa-check'></i> Estado
+                                    </li>
+                                </ul>
+                                <div style='margin-top:8px' class='footer'>
+                                    <button type='button' onclick='CerrarCaja(3)' data-toggle='modal' data-target='#Modal_RealizarPago' style='margin-right:3px' class='btn btn-block mb-1 btn-outline-primary btn-sm'><i class='far fa-clipboard'></i> Cerrar caja</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='col-xl-4 col-sm-6 col-lg-4 col-12'>
+                            <div class='cardCarCustom card border-danger mb-3'>
+                                <div class='card-body' style='padding:0px'>
+                                    <h4 class='card-title' style='text-align:center;margin-bottom: 4px;color:#dc3545!important'>
+                                        Pepe Rios Ortega
+                                    </h4>
+                                </div>
+                                <ul class='list-group list-group-flush'>
+                                    <li class='list-group-item' style='padding:0.2rem;font-size:12px'>
+                                        <span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>Caja 5</span>
+                                        <i class='far fa-bookmark'></i> Nº Caja
+                                    </li>
+                                </ul>
+                                <label class='text-center' style='margin:0 0 0 0'>Fecha:</label>
+                                <div class='alert alert-primary text-center' style='margin:0px 0 3px 0;padding:0 0 0 0'>Sep 17 2020 12:10PM</div>
+
+                                <label class='text-center' style='margin:0 0 0 0'>Fecha Apertura:</label>
+                                <div class='alert alert-primary text-center' style='margin:0px 0 5px 0;padding:0 0 0 0'>Sep 17 2020 12:10PM</div>
+
+
+                                <ul class='list-group list-group-flush'>
+                                    <li class='list-group-item' style='padding:0.2rem;font-size:12px'>
+                                        <span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>300 (Bs.)</span>
+                                        <i class='fas fa-money-bill-alt'></i> Monto Incial
+                                    </li>
+                                </ul>
+                                <label class='text-center' style='margin:3px 0 0 0'>Monto Acumulado:</label>
+                                <div class='alert alert-primary text-center' style='margin:0px 0 5px 0;padding:0 0 0 0'>500 (Bs.)</div>
+
+                                <ul class='list-group list-group-flush'>
+                                    <li class='list-group-item' style='padding:0.2rem;font-size:12px'>
+                                        <span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>Cerrado</span>
+                                        <i class='fa fa-times'></i> Estado
+                                    </li>
+                                </ul>
+                                <div style='margin-top:8px' class='footer'>
+                                    <button type='button' onclick='RealizarPago(3)' data-toggle='modal' data-target='#Modal_RealizarPago' style='margin-right:3px' class='btn btn-block mb-1 btn-outline-danger btn-sm'><i class='far fa-clipboard'></i> Traspazar</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='col-xl-4 col-sm-6 col-lg-4 col-12'>
+                            <div class='cardCarCustom card border-warning mb-3'>
+                                <div class='card-body' style='padding:0px'>
+                                    <h4 class='card-title' style='text-align:center;margin-bottom: 4px;color:#FFC107!important'>
+                                        Pepe Rios Ortega
+                                    </h4>
+                                </div>
+                                <ul class='list-group list-group-flush'>
+                                    <li class='list-group-item' style='padding:0.2rem;font-size:12px'>
+                                        <span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>Caja 5</span>
+                                        <i class='far fa-bookmark'></i> Nº Caja
+                                    </li>
+                                </ul>
+                                <label class='text-center' style='margin:0 0 0 0'>Fecha:</label>
+                                <div class='alert alert-primary text-center' style='margin:0px 0 3px 0;padding:0 0 0 0'>Sep 17 2020 12:10PM</div>
+
+                                <label class='text-center' style='margin:0 0 0 0'>Fecha Apertura:</label>
+                                <div class='alert alert-primary text-center' style='margin:0px 0 5px 0;padding:0 0 0 0'>Sep 17 2020 12:10PM</div>
+
+                                <ul class='list-group list-group-flush'>
+                                    <li class='list-group-item' style='padding:0.2rem;font-size:12px'>
+                                        <span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>300 (Bs.)</span>
+                                        <i class='fas fa-money-bill-alt'></i> Monto Incial
+                                    </li>
+                                </ul>
+                                <label class='text-center' style='margin:3px 0 0 0'>Monto Acumulado:</label>
+                                <div class='alert alert-primary text-center' style='margin:0px 0 5px 0;padding:0 0 0 0'>500 (Bs.)</div>
+
+                                <ul class='list-group list-group-flush'>
+                                    <li class='list-group-item' style='padding:0.2rem;font-size:12px'>
+                                        <span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>Traspasado</span>
+                                        <i class='fa fa-check'></i> Estado
+                                    </li>
+                                </ul>
+                                <div style='margin-top:8px' class='footer'>
+                                    <button type='button' onclick='RealizarPago(3)' data-toggle='modal' data-target='#Modal_RealizarPago' style='margin-right:3px' class='btn btn-block mb-1 btn-outline-warning btn-sm'><i class='far fa-clipboard'></i> Traspaso Final</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='col-xl-4 col-sm-6 col-lg-4 col-12'>
+                            <div class='cardCarCustom card border-secondary mb-3'>
+                                <div class='card-body' style='padding:0px'>
+                                    <h4 class='card-title' style='text-align:center;margin-bottom: 4px;color:#6c757d!important'>
+                                        Pepe Rios Ortega
+                                    </h4>
+                                </div>
+                                <ul class='list-group list-group-flush'>
+                                    <li class='list-group-item' style='padding:0.2rem;font-size:12px'>
+                                        <span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>Caja 5</span>
+                                        <i class='far fa-bookmark'></i> Nº Caja
+                                    </li>
+                                </ul>
+                                <label class='text-center' style='margin:0 0 0 0'>Fecha:</label>
+                                <div class='alert alert-primary text-center' style='margin:0px 0 3px 0;padding:0 0 0 0'>Sep 17 2020 12:10PM</div>
+
+                                <label class='text-center' style='margin:0 0 0 0'>Fecha Apertura:</label>
+                                <div class='alert alert-primary text-center' style='margin:0px 0 5px 0;padding:0 0 0 0'>Sep 17 2020 12:10PM</div>
+
+
+                                <ul class='list-group list-group-flush'>
+                                    <li class='list-group-item' style='padding:0.2rem;font-size:12px'>
+                                        <span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>300 (Bs.)</span>
+                                        <i class='fas fa-money-bill-alt'></i> Monto Incial
+                                    </li>
+                                </ul>
+                                <label class='text-center' style='margin:3px 0 0 0'>Monto Acumulado:</label>
+                                <div class='alert alert-primary text-center' style='margin:0px 0 5px 0;padding:0 0 0 0'>500 (Bs.)</div>
+
+                                <ul class='list-group list-group-flush'>
+                                    <li class='list-group-item' style='padding:0.2rem;font-size:12px'>
+                                        <span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>Traspaso final</span>
+                                        <i class='fa fa-check'></i> Estado
+                                    </li>
+                                </ul>
+                                <div style='margin-top:8px' class='footer'>
+                                    <button type='button' onclick='RealizarPago(3)' data-toggle='modal' data-target='#Modal_RealizarPago' style='margin-right:3px' class='btn btn-block mb-1 btn-outline-secondary btn-sm'><i class='far fa-clipboard'></i> Traspaso Final</button>
+                                </div>
+                            </div>
+                        </div>
+                        -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Modal_CerrarCaja" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Cerrar caja</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h4 class="form-section"><i class="far fa-clipboard"></i> Resumen de Turno</h4>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12" style="margin-bottom:5px">
+                        <text class="form-control" style="height:auto;padding-bottom:9px">
+                            <!--
+                            <label>Total monto depositos cuenta cliente:</label>
+                            <input type="text" class="form-control text-center" id="TotalPorDepositosCuentaCliente" disabled value="0 (Bs)" />
+                            <label>Cantidad ventas al creditos:</label>
+                            <input type="text" class="form-control text-center" id="CantVentasCredito" disabled value="0 (Bs)" />
+                             <label>Cantidad ventas al contado:</label>
+                            <input type="text" class="form-control text-center" id="CantVentasAlContado" disabled value="0 (Bs)" />
+                            -->
+                            <label><i class="far fa-money-bill-alt"></i> Total monto efectivo:</label>
+                            <input type="text" class="form-control text-center" id="TotalMontoEfectivo" disabled value="0 (Bs)" />
+                        </text>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <text class="form-control" style="height:auto;padding-bottom:9px">
+                            <!--
+                            <label>Cantidad de ventas con vale:</label>
+                            <input type="text" class="form-control text-center" id="CantVentasVale" disabled value="0 (Bs)" />
+                            <label>Cantidad cobros al creditos:</label>
+                            <input type="text" class="form-control text-center" id="CantCobrosCredito" disabled value="0 (Bs)" />
+                            <label>Cantidad ventas con tarjetas:</label>
+                            <input type="text" class="form-control text-center" id="CantVentasTarjeta" disabled value="0 (Bs)" />
+                            -->
+                            <label><i class="far fa-credit-card"></i> Total monto tarjetas:</label>
+                            <input type="text" class="form-control text-center" id="TotalMontoTarjeta" disabled value="0 (Bs)" />
+                        </text>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <label>Valor abrir caja:</label>
+                        <input type="text" style="margin-bottom:8px" class="form-control text-center" id="MontoAlAbrirCaja" disabled value="0 (Bs)" />
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <label>Total:</label>
+                        <input type="text" class="form-control text-center" id="Total" disabled value="0 (Bs)" />
+                    </div>
+                </div>
+                <button type="button" style="margin:5px 0 1px 0" onclick="DetalleArqueoCajaBorrador()" class="btn btn-block btn-outline-secondary"><i class="far fa-clipboard" aria-hidden="true"></i> Detalle arqueo caja Borrador</button>
+
+                <h4 class="form-section"><i class="fas fa-hand-holding-usd"></i> Control Caja</h4>
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                        <label>Monto:</label>
+                        <input type="number" class="form-control text-center" id="monto" value="0" />
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                        <label>Cantidad:</label>
+                        <input type="number" class="form-control text-center" id="cantidad" value="1" />
+                    </div>
+                    <div class="col-lg-4 col-md-12 col-sm-12">
+                        <label>Forma de pago:</label>
+                        <select id="IdTipoPagoVenta" class="form-control"></select>
+                    </div>
+                </div>
+                <button type="button" style="margin:5px 0 1px 0" onclick="AgregarFila()" class="btn btn-block btn-outline-primary"><i class="fa fa-check-circle" aria-hidden="true"></i> Agregar</button>
+
+                <div class="containerCustom table-responsive">
+                    <table class='table table-striped table-bordered dataTable table-sm' style='font-size:12px;' id="tarqueo">
+                        <thead>
+                            <tr role="row">
+                                <th class="sorting_asc" tabindex="0" aria-controls="tarqueo" rowspan="1" colspan="1" aria-label="Valor: activate to sort column descending" style="width: 56px;" aria-sort="ascending">Monto</th>
+                                <th class="sorting" tabindex="0" aria-controls="tarqueo" rowspan="1" colspan="1" aria-label="Cantidad: activate to sort column ascending" style="width: 92px;">Cantidad</th>
+                                <th class="sorting" tabindex="0" aria-controls="tarqueo" rowspan="1" colspan="1" aria-label="Total: activate to sort column ascending" style="width: 53px;">Total</th>
+                                <th class="sorting" tabindex="0" aria-controls="tarqueo" rowspan="1" colspan="1" aria-label="Forma de Pago: activate to sort column ascending" style="width: 70px;">Forma de Pago</th>
+                                <th class="sorting" tabindex="0" aria-controls="tarqueo" rowspan="1" colspan="1" aria-label=": activate to sort column ascending" style="width: 7px;"></th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2">Total Bs.</td>
+                                <td id="totalConteoArqueo">0</td>
+                                <td colspan="2"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <label>Coincide:</label>
+                <div class="alert alert-primary text-center" style="margin:0px 0 5px 0;padding:3px 3px 3px 3px"><span id="SignoCuadra"></span> <span id="CuadraMonto">0</span> (Bs.)</div>
+                <label>Observación</label>
+                <textarea class="form-control" id="ObservacionCierre" style="height:100px" placeholder="Observacion"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-ban" aria-hidden="true"></i> Cancelar</button>
+                <button type="button" style="display:none" id="BtnGuardarArqueo" class="btn btn-outline-primary" onclick="GuardarArqueo()"><i class="fas fa-hand-holding-usd"></i> Guardar Arqueo</button>
+                <button type="button" style="display:none" id="BtnTraspasoDefinitivo" class="btn btn-outline-primary" onclick="TraspasoDefinitivo()"><i class="fa fa-check-circle" aria-hidden="true"></i> Traspaso Definitivo</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Modal_CajasNoCerradas" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Traspaso</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="ll"></div>
+                <h1 class="text-muted text-center">Estimado usuario una o varias aperturas de caja no fueron cerradas.</h1>
+                <h4 class="form-section" style="margin:30px 0 20px 0"><i class="fa fa-user"></i> Lista de cajas no cerradas</h4>
+                <div class="row" id="CajasNoCerradasModal">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-ban" aria-hidden="true"></i> Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        var EstadoModificar = false;
+        var ArrayCajasAperturadas = [];
+        AllTipoVenta();
+        VerificarAperturaCaja();
+        AllCajaDisponible();
+        window.setTimeout(function () {
+            AllCajasAperturadasPorFecha();
+        }, 100);
+
+        VerificarCierreCajaAnterio();
+        $(document).ready(function () {
+            var now = new Date();
+            var day = ("0" + now.getDate()).slice(-2);
+            var month = ("0" + (now.getMonth() + 1)).slice(-2);
+            var today = now.getFullYear() + "-" + (month) + "-" + (day);
+            $("#FechaAperturaCaja").val(today);
+        });
+        function VerificarCierreCajaAnterio() {
+            //$('#Documento').appendTo('#ll');
+            //$('#ll').html($('#Documento'))
+            $.getJSON('@Url.Action("VerificarCierreCajaAnterio", "AperturaCaja")', (O) => {
+                var html = "";
+                if (@IdPerfil == 1) {
+                    if (O.length > 0) {
+                        $('#InicioHtml').hide();
+                        $('#Interfaz').show();
+                        $('#Modal_CajasNoCerradas').modal('show');
+                        O.forEach((value, i) => {
+                            html += "<div class='col-xl-4 col-sm-6 col-lg-4 col-12'><div class='cardCarCustom card border-primary mb-3'><div class='card-body' style='padding:0px'><h4 class='card-title' style='text-align:center;margin-bottom: 4px;color:#007bff'>Nº Apertura: " + value.Idapertura + "</h4></div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.2rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.Caja + "</span><i class='far fa-bookmark'></i> Nº Caja</li></ul><label class='text-center' style='margin:0 0 0 0'>Fecha Apertura:</label><div class='alert alert-primary text-center' style='margin:0px 0 5px 0;padding:0 0 0 0'>" + value.FechaApertura + "</div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.2rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.MontoInicialEnBs + " (Bs.)</span><i class='fas fa-money-bill-alt'></i> Monto Incial</li></ul><label class='text-center' style='margin:3px 0 0 0'>Cajero:</label><div class='alert alert-primary text-center' style='margin:0px 0 5px 0;padding:0 0 0 0'>" + value.Cajero + "</div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.2rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.EstadoAperturaCaja + "</span><i class='fa fa-check'></i> Estado</li></ul></div></div>";
+                        });
+                        $('#CajasNoCerradasModal').html(html);
+                    } else {
+                        $('#InicioHtml').hide();
+                        $('#Interfaz').show();
+                    }
+                } else {
+                    if (O.length > 0) {
+                        $('#InicioHtml').show();
+                        $('#Interfaz').hide();
+                        O.forEach((value, i) => {
+                            html += "<div class='col-xl-4 col-sm-6 col-lg-4 col-12'><div class='cardCarCustom card border-primary mb-3'><div class='card-body' style='padding:0px'><h4 class='card-title' style='text-align:center;margin-bottom: 4px;color:#007bff'>Nº Apertura: " + value.Idapertura + "</h4></div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.2rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.Caja + "</span><i class='far fa-bookmark'></i> Nº Caja</li></ul><label class='text-center' style='margin:0 0 0 0'>Fecha Apertura:</label><div class='alert alert-primary text-center' style='margin:0px 0 5px 0;padding:0 0 0 0'>" + value.FechaApertura + "</div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.2rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.MontoInicialEnBs + " (Bs.)</span><i class='fas fa-money-bill-alt'></i> Monto Incial</li></ul><label class='text-center' style='margin:3px 0 0 0'>Cajero:</label><div class='alert alert-primary text-center' style='margin:0px 0 5px 0;padding:0 0 0 0'>" + value.Cajero + "</div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.2rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.EstadoAperturaCaja + "</span><i class='fa fa-check'></i> Estado</li></ul></div></div>";
+                        });
+                        $('#CajasNoCerradas').html(html);
+                    } else {
+                        $('#InicioHtml').hide();
+                        $('#Interfaz').show();
+                    }
+                }
+            });
+        }
+        function VerificarAperturaCaja() {
+            $.getJSON('@Url.Action("VerificarAperturaCaja", "AperturaCaja")', (O) => {
+                EstadoModificar = (O.EstadoApertura == 0) ? false : true;
+                disabledHtml();
+                $("#alertaok").show();
+                $("#alertaok").html(O.EstadoMsg);
+                toastr.warning(O.EstadoMsg)
+                if (!EstadoModificar) {
+                    $("#BtnAperturarCaja").show();
+                }
+            });
+        }
+        function AllTipoVenta() {
+            $('#IdTipoPagoVenta').append("<option value='0'>Forma pago</option>");
+            $.getJSON('@Url.Action("TipoVentaPago", "TipoVenta")', function (O) {
+                O.forEach((value, i) => {
+                    $('#IdTipoPagoVenta').append("<option value='" + value.Id + "#" + value.Nombre + "'>" + value.Nombre + "</option>");
+                });
+            });
+        }
+        function AllCajaDisponible() {
+            $('#IdCaja').append("<option value='0'>Select Caja</option>");
+            $.getJSON('@Url.Action("AllCajaDisponible", "AperturaCaja")', (O) => {
+                O.forEach((value, i) => {
+                    $('#IdCaja').append("<option value='" + value.Id + "'>" + value.Nombre + "</option>");
+                });
+            });
+        }
+        @*function AllCajasAperturadas() {
+            $.getJSON('@Url.Action("AllCajasAperturadas", "AperturaCaja")', (O) => {
+                ArrayCajasAperturadas = O;
+                ListarCajasAperturadas();
+            });
+        }*@
+        function AllCajasAperturadasPorFecha() {
+            $.getJSON('@Url.Action("AllCajasAperturadasPorFecha", "AperturaCaja")', { Fecha: $('#FechaAperturaCaja').val() }, (O) => {
+                ArrayCajasAperturadas = O;
+                ListarCajasAperturadas();
+            });
+        }
+        function ListarCajasAperturadas() {
+            $('#CajasAperturadasTableHtml').empty();
+            var html = "";
+            var Btn = "";
+            var CodigoColor = "";
+            var Color = "";
+            var ico = "<i class='fa fa-check'></i>";
+            var NameFechaX = "";
+            ArrayCajasAperturadas.forEach((value, i) => {
+                switch (value.EstadoAperturaCaja) {
+                    case "Abierto":
+                        Btn = "<button type='button' onclick='ResumenDelDia(" + value.Idapertura + "," + value.IdCajero + ")' data-toggle='modal' data-target='#Modal_RealizarPago' style='margin-right:3px' class='btn btn-block mb-1 btn-outline-primary btn-sm'><i class='fas fa-hand-holding-usd'></i> Cerrar caja</button>";
+                        CodigoColor = "#007bff";
+                        Color = "primary";
+                        NameFechaX = "Cierre";
+                        break;
+                    case "Cerrado":
+                        Btn = "<button type='button' onclick='Traspasar(" + value.Idapertura + ")' data-toggle='modal' data-target='#Modal_RealizarPago' style='margin-right:3px' class='btn btn-block mb-1 btn-outline-danger btn-sm'><i class='far fa-clipboard'></i> Traspasar</button>";
+                        CodigoColor = "#dc3545!important";
+                        Color = "danger";
+                        ico = "<i class='fa fa-times'></i>";
+                        NameFechaX = "Cierre";
+                        break;
+                    case "Traspasado":
+                        if (@IdPerfil== 1) {
+                            Btn = "<button type='button' onclick='VerificarCaja(" + value.Idapertura + ")' data-toggle='modal' data-target='#Modal_RealizarPago' style='margin-right:3px' class='btn btn-block mb-1 btn-outline-warning btn-sm'><i class='far fa-clipboard'></i> Verificar Caja</button>";
+                        } else {
+                            Btn = "<text class='form-control text-center border-warning' style='height:auto;padding-bottom:9px'>En proceso de revisión</text>";
+                        }
+                        CodigoColor = "#FFC107!important";
+                        Color = "warning";
+                        ico = "<i class='fa fa-times'></i>";
+                        NameFechaX = "Traspaso";
+                        break;
+                    case "Traspaso Final":
+                        Btn = "<text class='form-control text-center border-secondary' style='height:auto;padding:1px 1px 1px 1px;'>Caja Cerrada</text>";
+                        CodigoColor = "#6c757d!important";
+                        Color = "secondary";
+                        ico = "<i class='fa fa-times'></i>";
+                        NameFechaX = "Traspaso Final";
+                        break;
+                    default:
+                }
+                html += "<div class='col-xl-4 col-sm-6 col-lg-4 col-12'><div class='cardCarCustom card border-" + Color + " mb-3'><div class='card-body' style='padding:0px'><h4 class='card-title' style='text-align:center;margin-bottom: 4px;color:" + CodigoColor + "'>" + value.Cajero + "</h4></div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.2rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.Caja + "</span><i class='far fa-bookmark'></i> Nº Caja</li></ul><label class='text-center' style='margin:0 0 0 0'>Fecha Apertura:</label><div class='alert alert-primary text-center' style='margin:0px 0 5px 0;padding:0 0 0 0'>" + value.FechaApertura + "</div><label class='text-center' style='margin:0 0 0 0'>Fecha " + NameFechaX + ":</label><div class='alert alert-primary text-center' style='margin:0px 0 5px 0;padding:0 0 0 0'>" + ((value.FechaX == null) ? "Sin fecha" : value.FechaX) + "</div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.2rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.MontoInicialEnBs + " (Bs.)</span><i class='fas fa-money-bill-alt'></i> Monto Incial</li></ul><label class='text-center' style='margin:3px 0 0 0'>Nº Apertura:</label><div class='alert alert-primary text-center' style='margin:0px 0 5px 0;padding:0 0 0 0'>-- " + value.Idapertura + " --</div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.2rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.EstadoAperturaCaja + "</span>" + ico + " Estado</li></ul><div style='margin-top:8px' class='footer'>" + Btn + "</div></div></div>";
+            });
+            $('#CajasAperturadasTableHtml').html(html);
+        }
+        function LimpiarCamposControlCaja() {
+            $("#monto").val(0)
+            $("#cantidad").val(1)
+            $("#IdTipoPagoVenta").val(0)
+        }
+        tabla = $('#tarqueo').DataTable({
+            "bPaginate": false, "bFilter": false, info: false, language: { zeroRecords: "Sin Registros" }
+        });
+        var detalle = [];
+        function AgregarFila() {
+            if ($("#IdTipoPagoVenta").val().split('#')[1] != undefined) {
+                if (parseInt($("#monto").val()) >= 0 && parseInt($("#cantidad").val())>=0) {
+                    var total = parseFloat($("#monto").val()) * parseFloat($("#cantidad").val());
+                    item = { Id: 0, Monto: $("#monto").val(), Cantidad: parseFloat($("#cantidad").val()), SubTotal: total, NameTipoPago: $("#IdTipoPagoVenta").val().split('#')[1], TipoVentaPago: $("#IdTipoPagoVenta").val().split('#')[0], Estado: true };
+                    detalle.push(item);
+                    ListarDetalle();
+                    LimpiarCamposControlCaja();
+                } else {
+                    toastr.warning('Los campos monto y cantidad deben ser mayores a cero')
+                }
+            } else {
+                toastr.warning('El campo forma de pago no es válido');
+            }
+        }
+        function BorrarFila(fila) {
+            var Id = detalle[fila].Id;
+            if (Id == 0) {
+                detalle.splice(fila, 1);
+            } else {
+                detalle[fila].Estado = false;
+            }
+            ListarDetalle();
+        }
+        function ListarDetalle() {
+            tabla.clear().draw();
+            var totalSumaArqueo = 0;
+            var SumaCuadraMonto = 0;
+            for (var i = 0; i < detalle.length; i++) {
+                if (detalle[i].Estado) {
+                    totalSumaArqueo += parseFloat(detalle[i].SubTotal);
+                    fila = [detalle[i].Monto, detalle[i].Cantidad, detalle[i].SubTotal, detalle[i].NameTipoPago, "<button onclick='BorrarFila(" + i + ")' style='float:right' class='btn btn-outline-danger btn-sm'><span class='fas fa-times'></span></button>"];
+                    tabla.row.add(fila).draw(false);
+                }
+            }
+            $("#totalConteoArqueo").html(totalSumaArqueo);
+            SumaCuadraMonto = parseFloat(totalSumaArqueo) - parseFloat($('#Total').val());
+            if (totalSumaArqueo < $('#Total').val()) {
+                SumaCuadraMonto = SumaCuadraMonto * -1;
+                $('#SignoCuadra').html("-");
+            } else {
+                $('#SignoCuadra').html("+");
+                if (SumaCuadraMonto == 0) {
+                    $('#SignoCuadra').html("");
+                }
+            }
+            $('#CuadraMonto').html(SumaCuadraMonto);
+        }
+        function LimpiarCampos() {
+            $('#IdCaja').val(0);
+            $('#MontoInialBs').val("0");
+        }
+        function disabledHtml() {
+            $("#IdCaja").prop("disabled", EstadoModificar);
+            $("#MontoInialBs").prop("disabled", EstadoModificar);
+            $("#BtnAperturarCaja").prop("disabled", EstadoModificar);
+        }
+        function AperturaCaja() {
+            var Obj = {
+                Caja: $('#IdCaja').val(),
+                MontoInicialEnBs: $('#MontoInialBs').val(),
+            };
+            $.ajax({
+                url: '@Url.Action("Aperturar", "AperturaCaja")',
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(Obj),
+                success: function (O) {
+                    if (O.responce) {
+                        EstadoModificar = true;
+                        disabledHtml();
+                        LimpiarCampos();
+                        VerificarAperturaCaja();
+                        AllCajasAperturadasPorFecha();
+                    }
+                    MostarInfSave(O.StatusSave);
+                }
+            });
+        }
+        var _IdApertura = 0;
+        function ResumenDelDia(IdApertura, IdCajero) {
+            detalle.length = 0;
+            ListarDetalle();
+            LimpiarCamposControlCaja();
+            $('#CuadraMonto').html("")
+            $('#SignoCuadra').html("")
+            $('#ObservacionCierre').val("");
+            $('#BtnGuardarArqueo').show();
+            $('#BtnTraspasoDefinitivo').hide();
+            $('#Modal_CerrarCaja').modal('show');
+            _IdApertura = IdApertura;
+            $.getJSON('@Url.Action("ResumenDelDia", "AperturaCaja")', { IdApertura, IdCajero }, (O) => {
+                $('#MontoAlAbrirCaja').val(O.ValorAbriCaja+" (Bs.)");
+                $('#TotalMontoEfectivo').val(O.oResumenBase.MontoTotalGeneradoEnEfectivo + " (Bs.)");
+                $('#TotalMontoTarjeta').val(O.oResumenBase.MontoTotalGeneradoEnTarjeta + " (Bs.)");
+                $('#Total').val(O.oResumenBase.MontoTotalGenerado);
+            });
+        }
+        function DetalleArqueoCajaBorrador() {
+            var url = '@Url.Action("ImprimirComprobanteCierreCaja", "Reportes")' + '?Tipo=PDF&IdApertura=' + _IdApertura;
+            window.open(url);
+        }
+        function Traspasar(IdApertura) {
+            $.getJSON('@Url.Action("Traspasar", "AperturaCaja")', { IdApertura }, (O) => {
+                if (O.responce) {
+                    AllCajasAperturadasPorFecha();
+                    VerificarAperturaCaja();
+                    IdApertura = 0;
+                    detalle.length = 0;
+                    ListarDetalle();
+                }
+                MostarInfSave(O.StatusSave);
+            });
+        }
+        function VerificarCaja(IdApertura) {
+            $('#BtnGuardarArqueo').hide();
+            $('#BtnTraspasoDefinitivo').show();
+            _IdApertura = IdApertura;
+            $('#Modal_CerrarCaja').modal('show');
+            $.getJSON('@Url.Action("VerificarCaja", "AperturaCaja")', { IdApertura }, (O) => {
+                $('#MontoAlAbrirCaja').val(O.ValorAbriCaja + " (Bs.)");
+                $('#TotalMontoEfectivo').val(O.oResumenBase.MontoTotalGeneradoEnEfectivo + " (Bs.)");
+                $('#TotalMontoTarjeta').val(O.oResumenBase.MontoTotalGeneradoEnTarjeta + " (Bs.)");
+                $('#Total').val(O.oResumenBase.MontoTotalGenerado);
+                $('#ObservacionCierre').val(O.Observacion);
+                detalle = O.LstDetalleArqueoCaja;
+                ListarDetalle();
+            });
+        }
+        function GuardarArqueo() {
+            var Obj = {
+                ArrayArqueo: detalle,
+                IdApertura: _IdApertura,
+                ObservacionCierre: $('#ObservacionCierre').val(),
+            }
+            $.ajax({
+                url: '@Url.Action("CierreCaja", "AperturaCaja")',
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(Obj),
+                success: function (O) {
+                    if (O.responce) {
+                        var url = '@Url.Action("ImprimirComprobanteCierreCaja", "Reportes")' + '?Tipo=PDF&IdApertura=' + _IdApertura;
+                        window.open(url);
+                        $('#Modal_CerrarCaja').modal('hide');
+                        AllCajaDisponible();
+                        AllCajasAperturadasPorFecha();
+                        LimpiarCamposControlCaja();
+                        detalle.length = 0;
+                        ListarDetalle();
+                        IdApertura = 0;
+                    }
+                    MostarInfSave(O.StatusSave);
+                }
+            });
+        }
+        function TraspasoDefinitivo() {
+            var Obj = {
+                ArrayArqueo: detalle,
+                IdApertura: _IdApertura,
+                ObservacionCierre: $('#ObservacionCierre').val(),
+            }
+            $.ajax({
+                url: '@Url.Action("TraspasoDefinitivo", "AperturaCaja")',
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(Obj),
+                success: function (O) {
+                    if (O.responce) {
+                        $('#Modal_CerrarCaja').modal('hide');
+                        $('#ObservacionCierre').val("");
+                        var url = '@Url.Action("ImprimirComprobanteCierreCaja", "Reportes")' + '?Tipo=PDF&IdApertura=' + _IdApertura;
+                        window.open(url);
+                        AllCajaDisponible();
+                        AllCajasAperturadasPorFecha();
+                        LimpiarCamposControlCaja();
+                        IdApertura = 0;
+                        detalle.length = 0;
+                        ListarDetalle();
+                    }
+                    MostarInfSave(O.StatusSave);
+                }
+            });
+        }
+    </script>
+}
+

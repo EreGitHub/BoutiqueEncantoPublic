@@ -1,0 +1,96 @@
+﻿
+@{
+    ViewBag.Title = "Inicio";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container mt-2">
+    <h4>Cierre de Caja</h4>
+    <div class="card mb-3 m-1">
+        <h4 class="form-section" style="margin:0 15px 0 15px"><i class="fa fa-user"></i> Apertura Caja</h4>
+        <div class="row">
+            <div class="col-sm-12 col-lg-5 col-md-12">
+                <div class="col-sm">
+                    <h4 class="form-section"><i class="fa fa-user"></i> Producto</h4>
+                    <button type="button" style="margin-bottom:8px" onclick="Nuevo()" class="btn btn-outline-primary btn-block"><i class="fa fa-plus"></i><span style="margin-left:5px">Nuevo Registro</span> </button>
+                    <label>Categoria</label>
+                    <select id="Categoria" disabled class="form-control">
+                        <option value="0">Select Categoria</option>
+                    </select>
+                    <input type="hidden" id="IdProducto" value="0" />
+                    <label>Nombre</label>
+                    <input type="text" disabled class="form-control" placeholder="Nombre" id="Nombre" />
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <label>Marca</label>
+                            <input type="text" disabled class="form-control" placeholder="Marca" id="Marca" />
+                            <label>Precio Compra</label>
+                            <input type="number" disabled class="form-control" placeholder="Precio Compra" id="PrecioCompra" />
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <label>Stock</label>
+                            <input type="text" disabled class="form-control" placeholder="Stock" id="Stock" />
+                            <label>Precio Venta</label>
+                            <input type="number" disabled class="form-control" placeholder="Precio Venta" id="PrecioVenta" />
+                        </div>
+                    </div>
+
+                    <hr style="margin-bottom:2px" />
+                    <div class="row" style="margin-top:8px">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary btn-block" style="margin-bottom:10px" onclick="Cancelar()">Cancelar</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" disabled id="BtnGuardar" class="btn btn-success btn-block" style="margin-bottom:10px" onclick="Guardar()">Guardar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-lg-7 col-md-12">
+                <div class="col-sm">
+                    <h4 class="form-section"><i class="fa fa-users"></i> Lista Productos</h4>
+                    <select id="IdCategoriaLst" style="margin-bottom:8px" class="form-control">
+                        <option value="0">Select All Categoria</option>
+                    </select>
+                    <div class="row" style="margin-bottom:5px">
+                        <div class="col-lg-10 col-md-10 col-sm-10">
+                            <div class="input-group" style="margin-bottom:5px">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                                </div>
+                                <input type="text" class="form-control" id="TxtPersonParametro" placeholder="Buscar por Nombre..." aria-label="Recipient's username" aria-describedby="basic-addon2">
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-2">
+                            <button type="button" onclick='AllProductos(1)' style="margin-right:3px" class="btn mb-1 btn-block btn-outline-primary"><i class="fa fa-search"></i> </button>
+                        </div>
+                    </div>
+                    <div class="containerCustom table-responsive">
+                        <table class='table table-hover table-sm' style='font-size:12px;'>
+                            <thead>
+                                <tr style="background-color:#17a2b8;border-color:#17a2b8;color:white">
+                                    <th width='1px'>Nº</th>
+                                    <th>Nombre</th>
+                                    <th>Marca</th>
+                                    <th>Stock</th>
+                                    <th>P. Compra</th>
+                                    <th>P. Venta</th>
+                                    <th width='1px'></th>
+                                    <th width='1px'></th>
+                                    <th width='1px'></th>
+                                </tr>
+                            </thead>
+                            <tbody id="ProductosTableHtml"></tbody>
+                        </table>
+                    </div>
+                    <div class="text-center">
+                        <ul class='pagination justify-content-end' id="PageProducto"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
