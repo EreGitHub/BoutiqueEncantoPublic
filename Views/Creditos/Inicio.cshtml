@@ -27,6 +27,11 @@
             </div>
             <h4 class="form-section" style="margin-bottom:10px"><i class="fa fa-user"></i> Lista Deudores</h4>
             <div class="row" id="DeudoresHtml">
+                <div class='col-xl-3 col-sm-6 col-lg-4 col-12'>
+                    <div class='cardCarCustom card border-danger mb-3'>
+                   
+                    </div>
+                </div>
             </div>
             <div id="Inicio" style="width:100%;padding:17% 0 17% 0">
                 <h1 class="text-muted text-center"><i class="fa fa-frown-o"></i> SIN REGISTRO</h1>
@@ -38,7 +43,30 @@
     </div>
 </div>
 
-<div class="modal fade" id="Modal_RealizarPago" tabindex="-1" role="dialog" style="overflow-y:scroll">
+<div class="modal fade" id="Modal_DetalleDeudaCliente" tabindex="-1" role="dialog" style="overflow-y:scroll">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalle</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="IdPersona" value="0" />
+                <div class="row" id="ContainerDeuda"></div>
+                <div class="text-center">
+                    <ul class='pagination justify-content-end' id="PageDeudaCreditosPersona"></ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><i class="far fa-times-circle"></i> Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Modal_RealizarPagoIndividual" tabindex="-1" role="dialog" style="overflow-y:scroll">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -50,7 +78,7 @@
             <div class="modal-body">
                 <input type="hidden" id="IdVenta" value="0" />
                 <label>Pagar con :</label>
-                <select id="TipoPago" onchange="CargarCuentaFavor()" class="form-control">
+                <select id="TipoPago" onchange="CargarCuentaFavorIndividual()" class="form-control">
                     <option value="0">Select Pago</option>
                 </select>
                 <label>Monto a Pagar</label>
@@ -58,6 +86,32 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" onclick="PagarMonto()"><i class="fas fa-hand-holding-usd"></i> Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Modal_RealizarPagoTodosDeCliente" tabindex="-1" role="dialog" style="overflow-y:scroll">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Realizar Pago todos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="IdVenta" value="0" />
+                <input type="hidden" id="SumDeuda" value="0" />
+                <label>Pagar con :</label>
+                <select id="TipoPagoTodos" onchange="CargarCuentaFavorDeUnaPersona()" class="form-control">
+                    <option value="0">Select Pago</option>
+                </select>
+                <label>Monto a Pagar</label>
+                <input type="number" id="MontoPagarTodos" class="form-control text-center" value="0" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" onclick="PagarMontoTotal()"><i class="fas fa-hand-holding-usd"></i> Aceptar</button>
             </div>
         </div>
     </div>
@@ -170,10 +224,11 @@
             $.getJSON('@Url.Action("TipoVentaPagoViewCredito", "TipoVenta")', function (O) {
                 O.forEach((value, i) => {
                     $('#TipoPago').append("<option value='" + value.Id + "'>" + value.Nombre + "</option>");
+                    $('#TipoPagoTodos').append("<option value='" + value.Id + "'>" + value.Nombre + "</option>");
                 });
             });
         }
-        function CargarCuentaFavor() {
+        function CargarCuentaFavorIndividual() {
             $('#MontoPagar').prop('disabled', false);
             if ($('#TipoPago').val() == 5) {
                 $.getJSON('@Url.Action("CuentaFavor","Creditos")', { IdVenta: $('#IdVenta').val() }, function (O) {
@@ -184,20 +239,62 @@
                 });
             }
         }
-        function RealizarPago(IdVenta) {
+        function CargarCuentaFavorDeUnaPersona() {
+            $('#MontoPagarTodos').prop('disabled', false);
+            if ($('#TipoPagoTodos').val() == 5) {
+                $.getJSON('@Url.Action("CuentaFavorPersona","Creditos")', { IdPersona: $('#IdPersona').val() }, function (O) {
+                    $('#MontoPagarTodos').val(O);
+                    $('#MontoPagarTodos').prop('disabled', true);
+                    //if (O == 0) {
+                    //    $('#MontoPagarTodos').prop('disabled', true);
+                    //}
+                });
+            }
+            $('#MontoPagarTodos').val(0);
+        }
+        function LimpiarRealizarPagoIndividual(IdVenta) {
             $('#TipoPago').val(0);
             $('#MontoPagar').val(0);
             $('#IdVenta').val(IdVenta);
         }
+        function LimpiarRealizarPagoTodos(IdPersona, SumDeuda) {
+            $('#TipoPagoTodos').val(0);
+            $('#MontoPagarTodos').val(0);
+            $('#IdPersona').val(IdPersona);
+            $('#SumDeuda').val(SumDeuda);
+        }
         function PagarMonto() {
             $.getJSON('@Url.Action("RealizarPago", "Creditos")', { IdVenta: $('#IdVenta').val(), Monto: $('#MontoPagar').val(), TipoPago: $('#TipoPago').val() }, function (O) {
                 if (O.responce) {
-                    $('#Modal_RealizarPago').modal('hide');
+                    $('#Modal_RealizarPagoIndividual').modal('hide');
                     AllPersonaDeudores(1, 1);
                     ImprimirComprobantePagoCrediito($('#IdVenta').val(),true);
                 }
                 MostarInfSave(O.StatusSave);
             });
+        }
+        function PagarMontoTotal() {
+            var _Estado = false;
+            if (parseInt($('#TipoPagoTodos').val()) != 5) {
+                if (parseInt($('#MontoPagarTodos').val()) <= parseInt($('#SumDeuda').val())) {
+                    _Estado = true;
+                } else {
+                    toastr.error("el monto debe ser menor a: " + $('#SumDeuda').val() + ", y mayor a cero");
+                }
+            } else {
+                _Estado = true;
+            }
+            if (_Estado) {
+                $.getJSON('@Url.Action("RealizarPagoTodo", "Creditos")', { IdPersona: $('#IdPersona').val(), Monto: $('#MontoPagarTodos').val(), TipoPago: $('#TipoPagoTodos').val() }, function (O) {
+                    if (O.responce) {
+                        $('#Modal_RealizarPagoTodosDeCliente').modal('hide');
+                        AllPersonaDeudores(1, 1);
+                        //ImprimirComprobantePagoCrediito($('#IdVenta').val(),true);
+                    }
+                    MostarInfSave(O.StatusSave);
+                });
+            }
+            //console.log(_Estado)
         }
         function DuplicadoPagoCredito(IdVenta) {
             ImprimirComprobantePagoCrediito(IdVenta,false);
@@ -270,8 +367,36 @@
                     $('#DeudoresHtml').show();
                     $('#Inicio').hide();
                 }
+                console.log(O.Lst)
                 O.Lst.forEach((value, i) => {
-                    html += "<div class='col-xl-3 col-sm-6 col-lg-4 col-12'><div class='cardCarCustom card border-" + ((value.Estado == "En Proceso") ? "danger" : "primary") + " mb-3'><div class='card-body' style='padding:0.1rem'><h4 class='card-title' style='text-align:center;margin-bottom: 5px'><i class='fa fa-user'></i> " + value.Cliente + "</h4></div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.3rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.FechaVenta + "</span><i class='fas fa-calendar'></i> Fecha Venta</li></ul><label class='text-center' style='margin:0 0 0 0'>Codigo de Venta:</label><div class='alert alert-primary text-center' style='margin:0px 0 5px 0;padding:0 0 0 0'>" + value.Codigo + "</div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.3rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.MontoTotalPagar + " (Bs.)</span><i class='fas fa-hand-holding-usd'></i> Total compra</li><li class='list-group-item' style='padding:0.3rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.MontoPagado + " (Bs.)</span><i class='fas fa-hand-holding-usd'></i> A cuenta</li><li class='list-group-item' style='padding:0.3rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + (value.MontoTotalPagar - value.MontoPagado) + " (Bs.)</span><i class='fas fa-hand-holding-usd'></i> Saldo</li></ul> <label class='text-center' style='margin:5px 0 0 0'>Saldo Total del Cliente</label><input type='text' style='margin:0 0 0px 0' disabled class='form-control text-center' value='" + value.SaldoTotalCliente + " (Bs.)' />" + ((value.Estado == "En Proceso") ? "<label class='text-center' style='margin:5px 0 0 0'>Proxima fecha de cobro</label><input type='text' style='margin:0 0 5px 0' disabled class='form-control text-center' value='" + value.ProximaFechaPagar + "' />" + ((EstadoAperturaCaja) ? "<button type='button' style='margin: 0px 0 0 0' onclick='AbrirModalProximaFecha(" + value.IdVenta + ")' class='btn btn-block mb-1 btn-outline-primary btn-sm'><i class='fa fa-plus'></i> Agregar nueva fecha de cobro</button>" : "") + "" : "<div class='alert alert-success text-center' style='margin:5px 0 5px 0'>El cliente realizo todos los pago</div>") + "<button type='button'  style='margin: 0px 0 0 0' onclick='DuplicadoPagoCredito(" + value.IdVenta + ")' class='btn btn-block btn-outline-primary btn-sm'><i class='fas fa-print'></i> Imprimir Duplicado</button><hr style='margin:3px 0 0 0' /><div style='margin-top:8px' class='footer'><div class='row'><div class='col-6'>" + ((value.Estado == "En Proceso") ? ((EstadoAperturaCaja) ? "<button type='button' onclick='RealizarPago(" + value.IdVenta + ")' data-toggle='modal' data-target='#Modal_RealizarPago' style='margin-right:3px' class='btn btn-block mb-1 btn-outline-primary btn-sm'><i class='fas fa-hand-holding-usd'></i> Realizar págo</button>" : "") : "") + "</div><div class='col-6'><button type='button' onclick='DetallePagos(" + value.IdVenta + ")' data-toggle='modal' data-target='#Modal_DetallePagos' class='btn btn-block mb-1 btn-outline-info btn-sm'><i class='far fa-clipboard'></i> Detalle</button></div></div></div></div></div>";
+                    html += "<div class='col-xl-3 col-sm-6 col-lg-4 col-12'>" +
+                        "<div class='cardCarCustom card border-" + ((value.Saldo != 0) ? "danger" : "primary") + " mb-3'>" +
+                        "<div class='card-body' style='padding:0.1rem'>" +
+                        "<h4 class='card-title' style='text-align:center;margin-bottom: 5px'>" +
+                        "<i class='fa fa-user'></i> " + value.Cliente +
+                        "</h4>" +
+                        "</div>" +
+                        "<ul class='list-group list-group-flush'>" +
+                        "<li class='list-group-item' style='padding:0.3rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.TotalCompra + " (Bs.)</span><i class='fas fa-hand-holding-usd'></i> Σ Total compra</li>" +
+                        "<li class='list-group-item' style='padding:0.3rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.ACuenta + " (Bs.)</span><i class='fas fa-hand-holding-usd'></i> Σ A cuenta</li>" +
+                        "<li class='list-group-item' style='padding:0.3rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.Saldo + " (Bs.)</span><i class='fas fa-hand-holding-usd'></i> Σ Saldo</li>" +
+                        "</ul>" +
+                        "<div style='margin-top:8px' class='footer'>" +
+                            ((value.Saldo != 0) ? "<div class='row'><div class='col-6'>" + ((EstadoAperturaCaja) ? "<button type='button' onclick='LimpiarRealizarPagoTodos(" + value.Id + "," + value.Saldo + ")' data-toggle='modal' data-target='#Modal_RealizarPagoTodosDeCliente' style='margin-right:3px' class='btn btn-block mb-1 btn-outline-primary btn-sm'><i class='fas fa-hand-holding-usd'></i> Realizar págo</button>" : "") + "</div><div class='col-6'><button type='button' onclick='DetalleDeuda(1," + value.Id + ")' class='btn btn-block mb-1 btn-outline-info btn-sm'><i class='far fa-clipboard'></i> Detalle</button></div></div>" : "<button type='button' onclick='DetalleDeuda(1," + value.Id + ")' class='btn btn-block mb-1 btn-outline-info btn-sm'><i class='far fa-clipboard'></i> Detalle</button>") +
+                        "</div>"+
+
+                            //"<div style='margin-top:8px' class='footer'>"+
+                            //    "<div class='row'>"+
+                            //        "<div class='col-6'>"+
+                            //            "<button type='button' onclick='LimpiarRealizarPagoTodos("+value.Id+","+value.Saldo+")' data-toggle='modal' data-target='#Modal_RealizarPagoTodosDeCliente' style='margin-right:3px' class='btn btn-block mb-1 btn-outline-primary btn-sm'><i class='fas fa-hand-holding-usd'></i> Realizar págo</button>"+
+                            //        "</div>"+
+                            //        "<div class='col-6'>"+
+                            //            "<button type='button' onclick='DetalleDeuda(1,"+value.Id+")' class='btn btn-block mb-1 btn-outline-info btn-sm'><i class='far fa-clipboard'></i> Detalle</button>"+
+                            //        "</div>"+
+                            //    "</div>"+
+                            //"</div>"+
+                        "</div>"+
+                    "</div>"
                 });
                 $('#DeudoresHtml').append(html);
 
@@ -304,6 +429,35 @@
                 paging.push({ Page: i++, Status: infStatus });
             };
             return paging;
+        }
+        function DetalleDeuda(pageIndex, IdPersona) {
+            $.getJSON('@Url.Action("DeudasClienteEspecifico", "Creditos")', { IdPersona, pageIndex }, (O) => {
+                $('#Modal_DetalleDeudaCliente').modal('show');
+                var html = "";
+                O.Lst.forEach((value, i) => {
+                    html += "<div class='col-xl-3 col-sm-6 col-lg-4 col-12'><div class='cardCarCustom card border-" + ((value.Estado == "En Proceso") ? "danger" : "primary") + " mb-3'><div class='card-body' style='padding:0.1rem'><h4 class='card-title' style='text-align:center;margin-bottom: 5px'><i class='fa fa-user'></i> " + value.Cliente + "</h4></div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.3rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.FechaVenta + "</span><i class='fas fa-calendar'></i> Fecha Venta</li></ul><label class='text-center' style='margin:0 0 0 0'>Codigo de Venta:</label><div class='alert alert-primary text-center' style='margin:0px 0 5px 0;padding:0 0 0 0'>" + value.Codigo + "</div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.3rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.MontoTotalPagar + " (Bs.)</span><i class='fas fa-hand-holding-usd'></i> Total compra</li><li class='list-group-item' style='padding:0.3rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.MontoPagado + " (Bs.)</span><i class='fas fa-hand-holding-usd'></i> A cuenta</li><li class='list-group-item' style='padding:0.3rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + (value.MontoTotalPagar - value.MontoPagado) + " (Bs.)</span><i class='fas fa-hand-holding-usd'></i> Saldo</li></ul> " + ((value.Estado == "En Proceso") ? "<label class='text-center' style='margin:5px 0 0 0'>Proxima fecha de cobro</label><input type='text' style='margin:0 0 5px 0' disabled class='form-control text-center' value='" + value.ProximaFechaPagar + "' />" + ((EstadoAperturaCaja) ? "<button type='button' style='margin: 0px 0 0 0' onclick='AbrirModalProximaFecha(" + value.IdVenta + ")' class='btn btn-block mb-1 btn-outline-primary btn-sm'><i class='fa fa-plus'></i> Agregar nueva fecha de cobro</button>" : "") + "" : "<div class='alert alert-success text-center' style='margin:5px 0 5px 0'>El cliente realizo todos los pago</div>") + "<button type='button'  style='margin: 0px 0 0 0' onclick='DuplicadoPagoCredito(" + value.IdVenta + ")' class='btn btn-block btn-outline-primary btn-sm'><i class='fas fa-print'></i> Imprimir Duplicado</button><hr style='margin:3px 0 0 0' /><div style='margin-top:8px' class='footer'><div class='row'><div class='col-6'>" + ((value.Estado == "En Proceso") ? ((EstadoAperturaCaja) ? "<button type='button' onclick='LimpiarRealizarPagoIndividual(" + value.IdVenta + ")' data-toggle='modal' data-target='#Modal_RealizarPagoIndividual' style='margin-right:3px' class='btn btn-block mb-1 btn-outline-primary btn-sm'><i class='fas fa-hand-holding-usd'></i> Realizar págo</button>" : "") : "") + "</div><div class='col-6'><button type='button' onclick='DetallePagos(" + value.IdVenta + ")' data-toggle='modal' data-target='#Modal_DetallePagos' class='btn btn-block mb-1 btn-outline-info btn-sm'><i class='far fa-clipboard'></i> Detalle</button></div></div></div></div></div>";
+                });
+                $('#ContainerDeuda').html(html);
+
+                var TotalPages = parseInt(O.TotalPages);
+                var rangeMin = 4;
+                var rangeMax = parseInt(TotalPages) == 1 ? 1 : rangeMin && parseInt(TotalPages) < rangeMin ? parseInt(TotalPages) : rangeMin;
+
+                const paging = { range: rangeMax, pages: TotalPages };
+                var PageArray = doPaging(pageIndex, paging);
+                var sTatusPrev = (pageIndex <= 1) ? true : false;
+                var sTatuslast = (pageIndex >= paging.pages) ? true : false;
+               var htmlPage = "<li class='page-item first colorPaginate" + (sTatusPrev ? "disabled" : "") + "'><a class='page-link' onclick='DetalleDeuda(1, " + TotalPages + ")'>First</a></li><li class='page-item prev  colorPaginate" + (sTatusPrev ? "disabled" : "") + "'><a class='page-link' onclick='DetalleDeuda(" + parseInt(pageIndex - 1) + ", " + IdPersona + ")'>Prev</a></li>";
+                PageArray.forEach((value, i) => {
+                    htmlPage += value.Status
+                        ?
+                        "<li class='page-item active'><a class='page-link' onclick='DetalleDeuda(" + value.Page + ", " + IdPersona + ")'>" + value.Page + "</a></li>"
+                        :
+                        "<li class='page-item colorPaginate'><a class='page-link' onclick='DetalleDeuda(" + value.Page + ", " + IdPersona + ")'>" + value.Page + "</a></li>";
+                });
+                htmlPage += "<li class='page-item next colorPaginate" + (sTatuslast ? "disabled" : "") + "'><a class='page-link' onclick='DetalleDeuda(" + parseInt(pageIndex + 1) + ", " + IdPersona + ")'>Next</a></li><li class='page-item last colorPaginate" + (sTatuslast ? "disabled" : "") + "'><a class='page-link' onclick='DetalleDeuda(" + paging.pages + ", " + IdPersona + ")'>Last</a></li>";
+                $('#PageDeudaCreditosPersona').html(htmlPage);
+            });
         }
     </script>
 }

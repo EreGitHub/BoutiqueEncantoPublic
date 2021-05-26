@@ -22,7 +22,8 @@
                                     <button id="Rpt2" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt2','Valor de inventario')">Valor de inventario</button>
                                     <button id="Rpt4" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt4','Ventas Anuladas')">Ventas Anuladas</button>
                                     <button id="Rpt5" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt5','Vales')">Vales</button>
-                                    <button id="Rpt6" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt6','Creditos por cobrar')">Creditos por cobrar</button>                                    
+                                    <button id="Rpt6" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt6','Creditos por cobrar')">Creditos por cobrar</button>
+                                    <button id="Rpt8" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt8','Items Vendidos')">Items Vendidos</button>
                                 }
                                 <button id="Rpt3" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt3','Items sin movimiento')">Items sin movimiento</button>
                                 <button id="Rpt7" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt7','Ingreso Diario')">Ingreso Diario</button>
@@ -163,7 +164,28 @@
                             <div class="row" id="AperturasCajasHtml">
                             </div>
                         </div>
-                    </div>                    
+                        <div id="ItemVenta" style="display:none">                            
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <label>Fecha Inicio:</label>
+                                    <input type="date" class="form-control" id="FechaInicioItemVenta" />
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <label>Fecha Fin:</label>
+                                    <input type="date" class="form-control" id="FechaFinItemVenta" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-2 col-md-2 col-sm-2">
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-sm-8">
+                                    <button onclick="ImprimirReporteItemVenta()" class="btn btn-outline-primary btn-lg btn-block" style="margin-top:10%;"> Procesar reporte</button>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -186,6 +208,8 @@
             $('#FechaFinVales').val(today);
             $('#FechaInicioItemSinMovimiento').val(today);
             $('#FechaFinItemSinMovimiento').val(today);
+            $('#FechaFinItemVenta').val(today);
+            $('#FechaInicioItemVenta').val(today);
         });
         function SeleccionarReporte(IdNombre, NombreReporte) {
             $(".list-group-item").removeClass('active');
@@ -200,6 +224,7 @@
                     $('#CreditosPorCobrar').hide();
                     $('#ItemsSinMovimiento').hide();
                     $('#IngresoDiario').hide();
+                    $('#ItemVenta').hide();
                     break;
                 case "Valor de inventario":
                     $('#CalculoGanacia').hide();
@@ -209,6 +234,7 @@
                     $('#CreditosPorCobrar').hide();
                     $('#ItemsSinMovimiento').hide();
                     $('#IngresoDiario').hide();
+                    $('#ItemVenta').hide();
                     break;
                 case "Ventas Anuladas":
                     $('#CalculoGanacia').hide();
@@ -218,6 +244,7 @@
                     $('#CreditosPorCobrar').hide();
                     $('#ItemsSinMovimiento').hide();
                     $('#IngresoDiario').hide();
+                    $('#ItemVenta').hide();
                     break;
                 case "Vales":
                     $('#CalculoGanacia').hide();
@@ -227,7 +254,8 @@
                     $('#CreditosPorCobrar').hide();
                     $('#ItemsSinMovimiento').hide();
                     $('#IngresoDiario').hide();
-                    break;                
+                    $('#ItemVenta').hide();
+                    break;
                 case "Creditos por cobrar":
                     $('#CalculoGanacia').hide();
                     $('#ValorInventario').hide();
@@ -236,6 +264,7 @@
                     $('#CreditosPorCobrar').show();
                     $('#ItemsSinMovimiento').hide();
                     $('#IngresoDiario').hide();
+                    $('#ItemVenta').hide();
                     break;
                 case "Items sin movimiento":
                     $('#CalculoGanacia').hide();
@@ -245,6 +274,7 @@
                     $('#CreditosPorCobrar').hide();
                     $('#ItemsSinMovimiento').show();
                     $('#IngresoDiario').hide();
+                    $('#ItemVenta').hide();
                     break;
                 case "Ingreso Diario":
                     $('#CalculoGanacia').hide();
@@ -254,13 +284,24 @@
                     $('#CreditosPorCobrar').hide();
                     $('#ItemsSinMovimiento').hide();
                     $('#IngresoDiario').show();
+                    $('#ItemVenta').hide();
+                    break;
+                case "Items Vendidos":
+                    $('#CalculoGanacia').hide();
+                    $('#ValorInventario').hide();
+                    $('#VentasAnuladas').hide();
+                    $('#Vales').hide();
+                    $('#CreditosPorCobrar').hide();
+                    $('#ItemsSinMovimiento').hide();
+                    $('#IngresoDiario').hide();
+                    $('#ItemVenta').show();
                     break;
                 default:
                     break;
-            }           
+            }
         }
 
-        function AllAperturaCajas() {            
+        function AllAperturaCajas() {
             $.getJSON('@Url.Action("AllCajasAperturadasPorFecha", "AperturaCaja")', { Fecha: $('#FechaIngresoDiario').val() }, (O) => {
                 var Html = "";
                 O.forEach((value, i) => {
@@ -298,6 +339,10 @@
         }
         function ImprimirReporteIngresoDiario(IdApertura) {
             var url = '@Url.Action("ImprimirComprobanteCierreCaja", "Reportes")' + '?Tipo=PDF&IdApertura=' + IdApertura;
+            window.open(url);
+        }
+        function ImprimirReporteItemVenta() {            
+            var url = '@Url.Action("ImprimirReporteItemVentaPorFecha", "Reportes")' + '?Tipo=PDF&FechaInicio=' + $('#FechaInicioItemVenta').val() + '&FechaFin=' + $('#FechaFinItemVenta').val();
             window.open(url);
         }
     </script>
