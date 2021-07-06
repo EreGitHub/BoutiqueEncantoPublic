@@ -27,6 +27,7 @@
                                 }
                                 <button id="Rpt3" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt3','Items sin movimiento')">Items sin movimiento</button>
                                 <button id="Rpt7" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt7','Ingreso Diario')">Ingreso Diario</button>
+                                <button id="Rpt9" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt9','Personas')">Personas</button>
                             }
                         }
                     </ul>
@@ -296,6 +297,17 @@
                     $('#IngresoDiario').hide();
                     $('#ItemVenta').show();
                     break;
+                case "Personas":
+                    $('#CalculoGanacia').hide();
+                    $('#ValorInventario').hide();
+                    $('#VentasAnuladas').hide();
+                    $('#Vales').hide();
+                    $('#CreditosPorCobrar').hide();
+                    $('#ItemsSinMovimiento').hide();
+                    $('#IngresoDiario').hide();
+                    $('#ItemVenta').hide();
+                    ImprimirReportePersonas();
+                    break;
                 default:
                     break;
             }
@@ -341,8 +353,12 @@
             var url = '@Url.Action("ImprimirComprobanteCierreCaja", "Reportes")' + '?Tipo=PDF&IdApertura=' + IdApertura;
             window.open(url);
         }
-        function ImprimirReporteItemVenta() {            
-            var url = '@Url.Action("ImprimirReporteItemVentaPorFecha", "Reportes")' + '?Tipo=PDF&FechaInicio=' + $('#FechaInicioItemVenta').val() + '&FechaFin=' + $('#FechaFinItemVenta').val();
+        function ImprimirReporteItemVenta() {
+            var url = '@Url.Action("ImprimirReporteItemVentaPorFecha", "Reportes")' + '?Tipo=PDF';
+            window.open(url);
+        }
+        function ImprimirReportePersonas() {            
+            var url = '@Url.Action("ImprimirReportePersonas", "Reportes")' + '?Tipo=PDF&FechaInicio=' + $('#FechaInicioItemVenta').val() + '&FechaFin=' + $('#FechaFinItemVenta').val();
             window.open(url);
         }
     </script>
