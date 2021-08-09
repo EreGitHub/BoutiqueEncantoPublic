@@ -354,11 +354,11 @@
             window.open(url);
         }
         function ImprimirReporteItemVenta() {
-            var url = '@Url.Action("ImprimirReporteItemVentaPorFecha", "Reportes")' + '?Tipo=PDF';
+            var url = '@Url.Action("ImprimirReporteItemVentaPorFecha", "Reportes")' + '?Tipo=PDF&FechaInicio=' + $('#FechaInicioItemVenta').val() + '&FechaFin=' + $('#FechaFinItemVenta').val();
             window.open(url);
         }
         function ImprimirReportePersonas() {            
-            var url = '@Url.Action("ImprimirReportePersonas", "Reportes")' + '?Tipo=PDF&FechaInicio=' + $('#FechaInicioItemVenta').val() + '&FechaFin=' + $('#FechaFinItemVenta').val();
+            var url = '@Url.Action("ImprimirReportePersonas", "Reportes")' + '?Tipo=PDF';//&FechaInicio=' + $('#FechaInicioItemVenta').val() + '&FechaFin=' + $('#FechaFinItemVenta').val();
             window.open(url);
         }
     </script>
