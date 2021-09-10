@@ -440,7 +440,7 @@
             </TablixRowHierarchy>
             <DataSetName>Ds_ComprobanteVale</DataSetName>
             <Top>0.26487cm</Top>
-            <Left>0.89641cm</Left>
+            <Left>0.91308cm</Left>
             <Height>2.65073cm</Height>
             <Width>6.48167cm</Width>
             <Style>
@@ -458,7 +458,7 @@
           <BackgroundColor>White</BackgroundColor>
         </Style>
       </Body>
-      <Width>3.27802in</Width>
+      <Width>3.29115in</Width>
       <Page>
         <PageHeader>
           <Height>2.44327cm</Height>
@@ -486,6 +486,7 @@
               </Paragraphs>
               <rd:DefaultName>Textbox1</rd:DefaultName>
               <Top>0.25549cm</Top>
+              <Left>0.01667cm</Left>
               <Height>1.5525cm</Height>
               <Width>8.32616cm</Width>
               <Style>
@@ -521,6 +522,7 @@
               </Paragraphs>
               <rd:DefaultName>Textbox17</rd:DefaultName>
               <Top>1.84327cm</Top>
+              <Left>0.01667cm</Left>
               <Height>0.6cm</Height>
               <Width>8.32616cm</Width>
               <ZIndex>1</ZIndex>
@@ -548,71 +550,10 @@
           </Style>
         </PageHeader>
         <PageFooter>
-          <Height>4.51584cm</Height>
+          <Height>3.85438cm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
-            <Textbox Name="Textbox53">
-              <CanGrow>true</CanGrow>
-              <KeepTogether>true</KeepTogether>
-              <Paragraphs>
-                <Paragraph>
-                  <TextRuns>
-                    <TextRun>
-                      <Value>Cambios y/o Devoluciones: </Value>
-                      <Style>
-                        <FontSize>7.5pt</FontSize>
-                        <FontWeight>Bold</FontWeight>
-                      </Style>
-                    </TextRun>
-                    <TextRun>
-                      <Value>Se aceptan cambios siempre y cuando el articulo este intacto y conserve etiquetas, solo hasta 24 horas despues de la compra; el cambio será por otro articulo de igual o mayor valor. No se aceptan devoluciones de dinero.</Value>
-                      <Style>
-                        <FontSize>7.5pt</FontSize>
-                        <FontWeight>Normal</FontWeight>
-                      </Style>
-                    </TextRun>
-                    <TextRun>
-                      <Value>
-Reservas: </Value>
-                      <Style>
-                        <FontSize>7.5pt</FontSize>
-                        <FontWeight>Bold</FontWeight>
-                      </Style>
-                    </TextRun>
-                    <TextRun>
-                      <Value>Se aceptan reservas con el 50% del costo del articulo, hasta 10 dias calendario. Pasado el plazo el articulo volvera a estar disponible para la venta al publico y el cliente perderá el adelanto por el mismo.</Value>
-                      <Style>
-                        <FontSize>7.5pt</FontSize>
-                        <FontWeight>Normal</FontWeight>
-                      </Style>
-                    </TextRun>
-                    <TextRun>
-                      <Value xml:space="preserve">
-</Value>
-                      <Style>
-                        <FontSize>7.5pt</FontSize>
-                        <FontWeight>Bold</FontWeight>
-                      </Style>
-                    </TextRun>
-                  </TextRuns>
-                  <Style />
-                </Paragraph>
-              </Paragraphs>
-              <rd:DefaultName>Textbox53</rd:DefaultName>
-              <Top>1.76443cm</Top>
-              <Height>2.31924cm</Height>
-              <Width>8.32616cm</Width>
-              <Style>
-                <Border>
-                  <Style>None</Style>
-                </Border>
-                <PaddingLeft>2pt</PaddingLeft>
-                <PaddingRight>2pt</PaddingRight>
-                <PaddingTop>2pt</PaddingTop>
-                <PaddingBottom>2pt</PaddingBottom>
-              </Style>
-            </Textbox>
             <Textbox Name="Textbox76">
               <CanGrow>true</CanGrow>
               <KeepTogether>true</KeepTogether>
@@ -640,9 +581,9 @@ Reservas: </Value>
               </Paragraphs>
               <rd:DefaultName>Textbox76</rd:DefaultName>
               <Top>1.23498cm</Top>
+              <Left>0.01667cm</Left>
               <Height>0.49417cm</Height>
               <Width>8.32616cm</Width>
-              <ZIndex>1</ZIndex>
               <Style>
                 <Border>
                   <Style>None</Style>
@@ -704,9 +645,10 @@ Reservas: </Value>
               </Paragraphs>
               <rd:DefaultName>Textbox77</rd:DefaultName>
               <Top>0.1058cm</Top>
+              <Left>0.01667cm</Left>
               <Height>1.02334cm</Height>
               <Width>8.32616cm</Width>
-              <ZIndex>2</ZIndex>
+              <ZIndex>1</ZIndex>
               <Style>
                 <Border>
                   <Style>None</Style>
@@ -716,6 +658,50 @@ Reservas: </Value>
                   <Style>Solid</Style>
                   <Width>1pt</Width>
                 </TopBorder>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox53">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>No se aceptan devoluciones de dinero. 
+Se aceptan cambios hasta un día hábil después de la compra, si el cliente no pudo medirse la prenda. 
+Las reservas son por 10 días hábiles, caso contrario el cliente pierde el dinero de seña.</Value>
+                      <Style>
+                        <FontSize>7.5pt</FontSize>
+                        <FontWeight>Normal</FontWeight>
+                      </Style>
+                    </TextRun>
+                    <TextRun>
+                      <Value xml:space="preserve">
+</Value>
+                      <Style>
+                        <FontSize>7.5pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox53</rd:DefaultName>
+              <Top>1.76443cm</Top>
+              <Height>1.86945cm</Height>
+              <Width>8.35952cm</Width>
+              <ZIndex>2</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
                 <PaddingLeft>2pt</PaddingLeft>
                 <PaddingRight>2pt</PaddingRight>
                 <PaddingTop>2pt</PaddingTop>

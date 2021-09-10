@@ -1862,7 +1862,7 @@
       </Style>
     </PageHeader>
     <PageFooter>
-      <Height>4.25126cm</Height>
+      <Height>3.5898cm</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <ReportItems>
@@ -1873,29 +1873,9 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>Cambios y/o Devoluciones: </Value>
-                  <Style>
-                    <FontSize>7.5pt</FontSize>
-                    <FontWeight>Bold</FontWeight>
-                  </Style>
-                </TextRun>
-                <TextRun>
-                  <Value>Se aceptan cambios siempre y cuando el articulo este intacto y conserve etiquetas, solo hasta 24 horas despues de la compra; el cambio será por otro articulo de igual o mayor valor. No se aceptan devoluciones de dinero.</Value>
-                  <Style>
-                    <FontSize>7.5pt</FontSize>
-                    <FontWeight>Normal</FontWeight>
-                  </Style>
-                </TextRun>
-                <TextRun>
-                  <Value>
-Reservas: </Value>
-                  <Style>
-                    <FontSize>7.5pt</FontSize>
-                    <FontWeight>Bold</FontWeight>
-                  </Style>
-                </TextRun>
-                <TextRun>
-                  <Value>Se aceptan reservas con el 50% del costo del articulo, hasta 10 dias calendario. Pasado el plazo el articulo volvera a estar disponible para la venta al publico y el cliente perderá el adelanto por el mismo.</Value>
+                  <Value>No se aceptan devoluciones de dinero. 
+Se aceptan cambios hasta un día hábil después de la compra, si el cliente no pudo medirse la prenda. 
+Las reservas son por 10 días hábiles, caso contrario el cliente pierde el dinero de seña.</Value>
                   <Style>
                     <FontSize>7.5pt</FontSize>
                     <FontWeight>Normal</FontWeight>
@@ -1910,12 +1890,14 @@ Reservas: </Value>
                   </Style>
                 </TextRun>
               </TextRuns>
-              <Style />
+              <Style>
+                <TextAlign>Center</TextAlign>
+              </Style>
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox53</rd:DefaultName>
           <Top>1.58807cm</Top>
-          <Height>2.31924cm</Height>
+          <Height>1.79007cm</Height>
           <Width>8.35952cm</Width>
           <Style>
             <Border>
