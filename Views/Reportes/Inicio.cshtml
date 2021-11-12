@@ -24,8 +24,9 @@
                                     <button id="Rpt5" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt5','Vales')">Vales</button>
                                     <button id="Rpt6" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt6','Creditos por cobrar')">Creditos por cobrar</button>
                                     <button id="Rpt8" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt8','Items Vendidos')">Items Vendidos</button>
+                                    <button id="Rpt3" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt3','Items sin movimiento')">Items sin movimiento</button>
+                                    <button id="Rpt10" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt10','TotalComprasPorPerona')">Total Compras Por Personas</button>
                                 }
-                                <button id="Rpt3" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt3','Items sin movimiento')">Items sin movimiento</button>
                                 <button id="Rpt7" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt7','Ingreso Diario')">Ingreso Diario</button>
                                 <button id="Rpt9" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt9','Personas')">Personas</button>
                             }
@@ -308,6 +309,17 @@
                     $('#ItemVenta').hide();
                     ImprimirReportePersonas();
                     break;
+                case "TotalComprasPorPerona":
+                    $('#CalculoGanacia').hide();
+                    $('#ValorInventario').hide();
+                    $('#VentasAnuladas').hide();
+                    $('#Vales').hide();
+                    $('#CreditosPorCobrar').hide();
+                    $('#ItemsSinMovimiento').hide();
+                    $('#IngresoDiario').hide();
+                    $('#ItemVenta').hide();
+                    ImprimirReporteTotalCmprasPorPersonas();
+                    break;
                 default:
                     break;
             }
@@ -357,8 +369,12 @@
             var url = '@Url.Action("ImprimirReporteItemVentaPorFecha", "Reportes")' + '?Tipo=PDF&FechaInicio=' + $('#FechaInicioItemVenta').val() + '&FechaFin=' + $('#FechaFinItemVenta').val();
             window.open(url);
         }
-        function ImprimirReportePersonas() {            
-            var url = '@Url.Action("ImprimirReportePersonas", "Reportes")' + '?Tipo=PDF';//&FechaInicio=' + $('#FechaInicioItemVenta').val() + '&FechaFin=' + $('#FechaFinItemVenta').val();
+        function ImprimirReportePersonas() {
+            var url = '@Url.Action("ImprimirReportePersonas", "Reportes")' + '?Tipo=PDF';
+            window.open(url);
+        }
+         function ImprimirReporteTotalCmprasPorPersonas() {
+            var url = '@Url.Action("ImprimirReporteSumaTotalComprasPorPersona", "Reportes")' + '?Tipo=PDF';
             window.open(url);
         }
     </script>

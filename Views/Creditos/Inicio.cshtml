@@ -367,7 +367,6 @@
                     $('#DeudoresHtml').show();
                     $('#Inicio').hide();
                 }
-                console.log(O.Lst)
                 O.Lst.forEach((value, i) => {
                     html += "<div class='col-xl-3 col-sm-6 col-lg-4 col-12'>" +
                         "<div class='cardCarCustom card border-" + ((value.Saldo != 0) ? "danger" : "primary") + " mb-3'>" +
@@ -382,7 +381,7 @@
                         "<li class='list-group-item' style='padding:0.3rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.Saldo + " (Bs.)</span><i class='fas fa-hand-holding-usd'></i> Σ Saldo</li>" +
                         "</ul>" +
                         "<div style='margin-top:8px' class='footer'>" +
-                            ((value.Saldo != 0) ? "<div class='row'><div class='col-6'>" + ((EstadoAperturaCaja) ? "<button type='button' onclick='LimpiarRealizarPagoTodos(" + value.Id + "," + value.Saldo + ")' data-toggle='modal' data-target='#Modal_RealizarPagoTodosDeCliente' style='margin-right:3px' class='btn btn-block mb-1 btn-outline-primary btn-sm'><i class='fas fa-hand-holding-usd'></i> Realizar págo</button>" : "") + "</div><div class='col-6'><button type='button' onclick='DetalleDeuda(1," + value.Id + ")' class='btn btn-block mb-1 btn-outline-info btn-sm'><i class='far fa-clipboard'></i> Detalle</button></div></div>" : "<button type='button' onclick='DetalleDeuda(1," + value.Id + ")' class='btn btn-block mb-1 btn-outline-info btn-sm'><i class='far fa-clipboard'></i> Detalle</button>") +
+                            ((value.Saldo != 0) ? "<div class='row'><div class='col-6'>" + ((EstadoAperturaCaja) ? "<button type='button' onclick='LimpiarRealizarPagoTodos(" + value.Id + "," + value.Saldo + ")' data-toggle='modal' data-target='#Modal_RealizarPagoTodosDeCliente' style='margin-right:3px' class='btn btn-block mb-1 btn-outline-primary btn-sm'><i class='fas fa-hand-holding-usd'></i> Realizar págo</button>" : "") + "</div><div class='col-6'><button type='button' onclick='DetalleDeuda(1," + value.Id + ")' class='btn btn-block mb-1 btn-outline-info btn-sm'><i class='far fa-clipboard'></i> Detalle</button></div></div><button type='button' onclick='ImprimirComprobanteGlobalPagos(" + value.Id + ")' class='btn btn-block mb-1 btn-outline-primary btn-sm'><i class='fas fa-print'></i> Imprimir Comprobante</button>" : "<button type='button' onclick='DetalleDeuda(1," + value.Id + ")' class='btn btn-block mb-1 btn-outline-info btn-sm'><i class='far fa-clipboard'></i> Detalle</button>") +
                         "</div>"+
 
                             //"<div style='margin-top:8px' class='footer'>"+
@@ -458,6 +457,10 @@
                 htmlPage += "<li class='page-item next colorPaginate" + (sTatuslast ? "disabled" : "") + "'><a class='page-link' onclick='DetalleDeuda(" + parseInt(pageIndex + 1) + ", " + IdPersona + ")'>Next</a></li><li class='page-item last colorPaginate" + (sTatuslast ? "disabled" : "") + "'><a class='page-link' onclick='DetalleDeuda(" + paging.pages + ", " + IdPersona + ")'>Last</a></li>";
                 $('#PageDeudaCreditosPersona').html(htmlPage);
             });
+        }
+        function ImprimirComprobanteGlobalPagos(IdCliente) {
+            var url = '@Url.Action("ImprimirComprobanteGlobalPagosCliente", "Reportes")' + '?Tipo=PDF&IdCliente=' + IdCliente;
+            window.open(url);
         }
     </script>
 }
