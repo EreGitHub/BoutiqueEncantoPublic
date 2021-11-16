@@ -708,13 +708,13 @@
             $('#FechaProximoSaldoModal').val($('#ProximaFechaCobro').val());
         }
         function AgregarSaldoPagarAdelantoCredito() {
-            if ($('#SaldoPagarModal').val() > 0 ) {
+            if ($('#SaldoPagarModal').val() >= 0 ) {
                 $('#Modal_SaldoPagarVentaCredito').modal('hide');
                 $('#SaldoAPagarPorAdelantado').val($('#SaldoPagarModal').val());
                 $('#ProximaFechaCobro').val($('#FechaProximoSaldoModal').val());
                 ValidarVentaPorCreditoMontos(SumaTotal());
             } else {
-                toastr.warning('El monto debe ser mayor a cero')
+                toastr.warning('El monto debe ser mayor o igual a cero')
             }
         }
         function GuardarVenta() {
