@@ -26,6 +26,7 @@
                                     <button id="Rpt8" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt8','Items Vendidos')">Items Vendidos</button>
                                     <button id="Rpt3" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt3','Items sin movimiento')">Items sin movimiento</button>
                                     <button id="Rpt10" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt10','TotalComprasPorPerona')">Total Compras Por Personas</button>
+                                    <button id="Rpt11" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt11','TotalComprasPorPeronaRangoFechas')">Total Compras Por Personas (Fechas)</button>
                                 }
                                 <button id="Rpt7" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt7','Ingreso Diario')">Ingreso Diario</button>
                                 <button id="Rpt9" style="margin-bottom:3px" class="list-group-item" onclick="SeleccionarReporte('Rpt9','Personas')">Personas</button>
@@ -166,7 +167,7 @@
                             <div class="row" id="AperturasCajasHtml">
                             </div>
                         </div>
-                        <div id="ItemVenta" style="display:none">                            
+                        <div id="ItemVenta" style="display:none">
                             <div class="row">
                                 <div class="col-lg-6 col-md-6 col-sm-6">
                                     <label>Fecha Inicio:</label>
@@ -182,6 +183,27 @@
                                 </div>
                                 <div class="col-lg-8 col-md-8 col-sm-8">
                                     <button onclick="ImprimirReporteItemVenta()" class="btn btn-outline-primary btn-lg btn-block" style="margin-top:10%;"> Procesar reporte</button>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="TotalVentaPersonaFecha" style="display:none">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <label>Fecha Inicio:</label>
+                                    <input type="date" class="form-control" id="FechaInicioTotalFecha" />
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <label>Fecha Fin:</label>
+                                    <input type="date" class="form-control" id="FechaFinTotalFecha" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-2 col-md-2 col-sm-2">
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-sm-8">
+                                    <button onclick="ImprimirReporteTotalVentaPersonaFecha()" class="btn btn-outline-primary btn-lg btn-block" style="margin-top:10%;"> Procesar reporte</button>
                                 </div>
                                 <div class="col-lg-2 col-md-2 col-sm-2">
                                 </div>
@@ -227,6 +249,7 @@
                     $('#ItemsSinMovimiento').hide();
                     $('#IngresoDiario').hide();
                     $('#ItemVenta').hide();
+                    $('#TotalVentaPersonaFecha').hide();
                     break;
                 case "Valor de inventario":
                     $('#CalculoGanacia').hide();
@@ -237,6 +260,7 @@
                     $('#ItemsSinMovimiento').hide();
                     $('#IngresoDiario').hide();
                     $('#ItemVenta').hide();
+                    $('#TotalVentaPersonaFecha').hide();
                     break;
                 case "Ventas Anuladas":
                     $('#CalculoGanacia').hide();
@@ -247,6 +271,7 @@
                     $('#ItemsSinMovimiento').hide();
                     $('#IngresoDiario').hide();
                     $('#ItemVenta').hide();
+                    $('#TotalVentaPersonaFecha').hide();
                     break;
                 case "Vales":
                     $('#CalculoGanacia').hide();
@@ -257,6 +282,7 @@
                     $('#ItemsSinMovimiento').hide();
                     $('#IngresoDiario').hide();
                     $('#ItemVenta').hide();
+                    $('#TotalVentaPersonaFecha').hide();
                     break;
                 case "Creditos por cobrar":
                     $('#CalculoGanacia').hide();
@@ -267,6 +293,7 @@
                     $('#ItemsSinMovimiento').hide();
                     $('#IngresoDiario').hide();
                     $('#ItemVenta').hide();
+                    $('#TotalVentaPersonaFecha').hide();
                     break;
                 case "Items sin movimiento":
                     $('#CalculoGanacia').hide();
@@ -277,6 +304,7 @@
                     $('#ItemsSinMovimiento').show();
                     $('#IngresoDiario').hide();
                     $('#ItemVenta').hide();
+                    $('#TotalVentaPersonaFecha').hide();
                     break;
                 case "Ingreso Diario":
                     $('#CalculoGanacia').hide();
@@ -287,6 +315,7 @@
                     $('#ItemsSinMovimiento').hide();
                     $('#IngresoDiario').show();
                     $('#ItemVenta').hide();
+                    $('#TotalVentaPersonaFecha').hide();
                     break;
                 case "Items Vendidos":
                     $('#CalculoGanacia').hide();
@@ -297,6 +326,7 @@
                     $('#ItemsSinMovimiento').hide();
                     $('#IngresoDiario').hide();
                     $('#ItemVenta').show();
+                    $('#TotalVentaPersonaFecha').hide();
                     break;
                 case "Personas":
                     $('#CalculoGanacia').hide();
@@ -307,6 +337,7 @@
                     $('#ItemsSinMovimiento').hide();
                     $('#IngresoDiario').hide();
                     $('#ItemVenta').hide();
+                    $('#TotalVentaPersonaFecha').hide();
                     ImprimirReportePersonas();
                     break;
                 case "TotalComprasPorPerona":
@@ -318,7 +349,19 @@
                     $('#ItemsSinMovimiento').hide();
                     $('#IngresoDiario').hide();
                     $('#ItemVenta').hide();
+                    $('#TotalVentaPersonaFecha').hide();
                     ImprimirReporteTotalCmprasPorPersonas();
+                    break;
+                case "TotalComprasPorPeronaRangoFechas":
+                    $('#CalculoGanacia').hide();
+                    $('#ValorInventario').hide();
+                    $('#VentasAnuladas').hide();
+                    $('#Vales').hide();
+                    $('#CreditosPorCobrar').hide();
+                    $('#ItemsSinMovimiento').hide();
+                    $('#IngresoDiario').hide();
+                    $('#ItemVenta').hide();
+                    $('#TotalVentaPersonaFecha').show();
                     break;
                 default:
                     break;
@@ -330,7 +373,34 @@
                 var Html = "";
                 O.forEach((value, i) => {
                     if (value.EstadoAperturaCaja =="Traspaso Final") {
-                        Html += "<div class='col-xl-4 col-sm-6 col-lg-4 col-12'><div class='cardCarCustom card border-primary mb-3'><div class='card-body' style='padding:0px'><h4 class='card-title' style='text-align:center;margin-bottom: 4px;color:#007bff'>" + value.Caja + "</h4></div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.2rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.FechaApertura + "</span><i class='far fa-bookmark'></i> Fecha Apertura</li></ul><label class='text-center' style='margin:8px 0 0px 0'>Nombre del Cajero:</label><div class='alert alert-primary text-center' style='margin:0px 0 10px 0;padding:0 0 0 0'>" + value.Cajero + "</div><ul class='list-group list-group-flush'><li class='list-group-item' style='padding:0.2rem;font-size:12px'><span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>" + value.Idapertura + "</span><i class='far fa-bookmark'></i> Nº Apertura</li></ul><div class='alert alert-primary text-center' style='margin:5px 0 0px 0;padding:0 0 0 0'>" + value.EstadoAperturaCaja + "</div><hr style='margin:4px 0 0 0'><div style='margin-top:5px' class='footer'><button type='button' style='margin: 3px 0 0 0' onclick='ImprimirReporteIngresoDiario(" + value.Idapertura + ")' class='btn btn-block btn-outline-primary btn-sm'><i class='fas fa-print'></i> Imprimir</button></div></div></div>";
+                        Html += 
+                            `
+                             <div class='col-xl-4 col-sm-6 col-lg-4 col-12'>
+                                <div class='cardCarCustom card border-primary mb-3'>
+                                    <div class='card-body' style='padding:0px'>
+                                        <h4 class='card-title' style='text-align:center;margin-bottom: 4px;color:#007bff'>${value.Caja}</h4>
+                                    </div>
+                                    <ul class='list-group list-group-flush'>
+                                        <li class='list-group-item' style='padding:0.2rem;font-size:12px'>
+                                            <span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>${value.FechaApertura}</span>
+                                            <i class='far fa-bookmark'></i> Fecha Apertura
+                                        </li>
+                                    </ul>
+                                    <label class='text-center' style='margin:8px 0 0px 0'>Nombre del Cajero:</label>
+                                    <div class='alert alert-primary text-center' style='margin:0px 0 10px 0;padding:0 0 0 0'>${value.Cajero}</div>
+                                    <ul class='list-group list-group-flush'>
+                                        <li class='list-group-item' style='padding:0.2rem;font-size:12px'>
+                                            <span style='padding:3px;font-size:11px' class='badge badge-pill bg-blue float-right'>${value.Idapertura}</span>
+                                            <i class='far fa-bookmark'></i> Nº Apertura
+                                        </li>
+                                    </ul>
+                                        <div class='alert alert-primary text-center' style='margin:5px 0 0px 0;padding:0 0 0 0'>${value.EstadoAperturaCaja}</div>
+                                    <hr style='margin:4px 0 0 0'>
+                                    <div style='margin-top:5px' class='footer'>
+                                        <button type='button' style='margin: 3px 0 0 0' onclick='ImprimirReporteIngresoDiario(${value.Idapertura})' class='btn btn-block btn-outline-primary btn-sm'><i class='fas fa-print'></i> Imprimir</button>
+                                    </div>
+                                </div>
+                            </div>`
                     }
                 });
                 $('#AperturasCajasHtml').html(Html);
@@ -373,8 +443,16 @@
             var url = '@Url.Action("ImprimirReportePersonas", "Reportes")' + '?Tipo=PDF';
             window.open(url);
         }
-         function ImprimirReporteTotalCmprasPorPersonas() {
+        function ImprimirReporteTotalCmprasPorPersonas() {
             var url = '@Url.Action("ImprimirReporteSumaTotalComprasPorPersona", "Reportes")' + '?Tipo=PDF';
+            window.open(url);
+        }
+        function ImprimirReporteTotalVentaPersonaFecha() {
+            if ($('#FechaInicioTotalFecha').val() === '' && $('#FechaFinTotalFecha').val() === '') {
+                toastr.error("el formato de las fechas no es corecto.");
+                return;
+            }
+            var url = '@Url.Action("ImprimirReporteTotalVentaPersonaFecha", "Reportes")' + '?Tipo=PDF&FechaInicio=' + $('#FechaInicioTotalFecha').val() + '&FechaFin=' + $('#FechaFinTotalFecha').val();
             window.open(url);
         }
     </script>
